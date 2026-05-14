@@ -1,0 +1,12 @@
+tile.onlycrates.block_giant_chest.name=小型储物板条箱
+tile.onlycrates.block_giant_chest_medium.name=中型储物板条箱
+tile.onlycrates.block_giant_chest_large.name=大型储物板条箱
+item.onlycrates.item_chest_to_crate_upgrade.name=箱子转储物板条箱升级
+item.onlycrates.item_small_to_medium_crate_upgrade.name=小型转中型储物板条箱升级
+item.onlycrates.item_medium_to_large_crate_upgrade.name=中型转大型储物板条箱升级
+container.onlycrates.giantChest.name=小型储物板条箱
+container.onlycrates.giantChest.desc='小型'
+container.onlycrates.giantChestMedium.name=中型储物板条箱
+container.onlycrates.giantChestLarge.name=大型储物板条箱
+container.onlycrates.giantChestLarge.desc=超级坚固
+itemGroup.onlycrates=板条箱

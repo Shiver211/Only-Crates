@@ -1,0 +1,12 @@
+tile.onlycrates.block_giant_chest.name=Small Storage Crate
+tile.onlycrates.block_giant_chest_medium.name=Medium Storage Crate
+tile.onlycrates.block_giant_chest_large.name=Large Storage Crate
+item.onlycrates.item_chest_to_crate_upgrade.name=Chest To Storage Crate Upgrade
+item.onlycrates.item_small_to_medium_crate_upgrade.name=Small To Medium Storage Crate Upgrade
+item.onlycrates.item_medium_to_large_crate_upgrade.name=Medium To Large Storage Crate Upgrade
+container.onlycrates.giantChest.name=Small Storage Crate
+container.onlycrates.giantChest.desc='Small'
+container.onlycrates.giantChestMedium.name=Medium Storage Crate
+container.onlycrates.giantChestLarge.name=Large Storage Crate
+container.onlycrates.giantChestLarge.desc=Supersolid
+itemGroup.onlycrates=Only Crates
