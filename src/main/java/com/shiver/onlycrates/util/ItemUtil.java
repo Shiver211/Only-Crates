@@ -11,7 +11,6 @@ import com.shiver.onlycrates.registry.RegistryHandler;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 
 public final class ItemUtil {
 

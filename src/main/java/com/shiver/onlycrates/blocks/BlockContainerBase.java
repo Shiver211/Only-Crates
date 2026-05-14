@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import com.shiver.onlycrates.OnlyCrates;
 import com.shiver.onlycrates.tile.TileEntityBase;
 import com.shiver.onlycrates.tile.TileEntityInventoryBase;
 import com.shiver.onlycrates.util.ItemUtil;
@@ -19,7 +18,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;

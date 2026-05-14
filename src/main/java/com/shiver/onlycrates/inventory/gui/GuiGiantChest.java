@@ -7,8 +7,6 @@ import com.shiver.onlycrates.inventory.ContainerGiantChest;
 import com.shiver.onlycrates.network.NetworkHandler;
 import com.shiver.onlycrates.tile.TileEntityBase;
 import com.shiver.onlycrates.tile.TileEntityGiantChest;
-import com.shiver.onlycrates.tile.TileEntityGiantChestLarge;
-import com.shiver.onlycrates.tile.TileEntityGiantChestMedium;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;

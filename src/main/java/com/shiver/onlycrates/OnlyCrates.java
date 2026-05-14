@@ -6,7 +6,6 @@ import com.shiver.onlycrates.network.NetworkHandler;
 import com.shiver.onlycrates.proxy.CommonProxy;
 import com.shiver.onlycrates.tile.TileEntityBase;
 
-import com.shiver.onlycrates.Tags;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;

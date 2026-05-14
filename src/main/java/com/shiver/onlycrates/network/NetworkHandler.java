@@ -2,7 +2,6 @@ package com.shiver.onlycrates.network;
 
 import com.shiver.onlycrates.OnlyCrates;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
