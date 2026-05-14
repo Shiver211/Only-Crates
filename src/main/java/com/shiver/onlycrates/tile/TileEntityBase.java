@@ -34,6 +34,7 @@ public abstract class TileEntityBase extends TileEntity implements ITickable {
         register(TileEntityGiantChest.class);
         register(TileEntityGiantChestMedium.class);
         register(TileEntityGiantChestLarge.class);
+        register(TileEntityGiantChestConfigurable.class);
     }
 
     private static void register(Class<? extends TileEntityBase> tileClass) {

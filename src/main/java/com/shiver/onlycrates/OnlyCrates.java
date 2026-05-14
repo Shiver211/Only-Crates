@@ -1,5 +1,6 @@
 package com.shiver.onlycrates;
 
+import com.shiver.onlycrates.config.ModConfig;
 import com.shiver.onlycrates.inventory.GuiHandler;
 import com.shiver.onlycrates.network.NetworkHandler;
 import com.shiver.onlycrates.proxy.CommonProxy;
@@ -28,6 +29,7 @@ public class OnlyCrates {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        ModConfig.load(event.getSuggestedConfigurationFile());
         NetworkHandler.init();
         PROXY.preInit();
     }

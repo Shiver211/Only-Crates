@@ -37,24 +37,25 @@ public class GuiGiantChest extends GuiBase {
     @Override
     public void initGui() {
         super.initGui();
+        int pageCount = this.chest.getPageCount();
         if (this.page > 0) {
             this.buttonList.add(new GuiButton(this.page - 1, this.guiLeft + 13, this.guiTop + 172, 20, 20, "<"));
         }
-        if (this.page == 0 && this.chest instanceof TileEntityGiantChestMedium || this.page <= 1 && this.chest instanceof TileEntityGiantChestLarge) {
+        if (this.page < pageCount - 1) {
             this.buttonList.add(new GuiButton(this.page + 1, this.guiLeft + 209, this.guiTop + 172, 20, 20, ">"));
         }
     }
 
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
-        if (button.id >= 0 && button.id < 3) {
+        if (button.id >= 0 && button.id < this.chest.getPageCount()) {
             NetworkHandler.sendButtonPacket(this.chest, button.id);
         }
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int x, int y) {
-        String text = net.minecraft.client.resources.I18n.format(this.chest.getNameForTranslation());
+        String text = this.chest.getDisplayName().getFormattedText();
         this.fontRenderer.drawString(text, this.xSize / 2 - this.fontRenderer.getStringWidth(text) / 2, -10, 16777215);
     }
 

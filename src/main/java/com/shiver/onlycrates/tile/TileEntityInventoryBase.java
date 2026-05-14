@@ -15,10 +15,14 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 public abstract class TileEntityInventoryBase extends TileEntityBase {
 
-    public final ItemStackHandlerAA inv;
+    public ItemStackHandlerAA inv;
 
     public TileEntityInventoryBase(int slots, String name) {
         super(name);
+        this.setInventorySize(slots);
+    }
+
+    protected void setInventorySize(int slots) {
         this.inv = new TileStackHandler(slots);
     }
 

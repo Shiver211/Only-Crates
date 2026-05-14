@@ -5,6 +5,7 @@ import java.util.List;
 import com.shiver.onlycrates.OnlyCrates;
 import com.shiver.onlycrates.inventory.GuiHandler;
 import com.shiver.onlycrates.tile.TileEntityGiantChest;
+import com.shiver.onlycrates.tile.TileEntityGiantChestConfigurable;
 import com.shiver.onlycrates.tile.TileEntityGiantChestLarge;
 import com.shiver.onlycrates.tile.TileEntityGiantChestMedium;
 
@@ -30,10 +31,24 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 public class BlockGiantChest extends BlockContainerBase {
 
     public final int type;
+    private final int configPages;
+    private final String customDisplayName;
+    private final String blockId;
 
     public BlockGiantChest(String name, int type) {
+        this(name, type, 0, null, null);
+    }
+
+    public BlockGiantChest(String name, int pages, String customDisplayName, String blockId) {
+        this(name, -1, pages, customDisplayName, blockId);
+    }
+
+    private BlockGiantChest(String name, int type, int pages, String customDisplayName, String blockId) {
         super(Material.WOOD, name);
         this.type = type;
+        this.configPages = pages;
+        this.customDisplayName = customDisplayName;
+        this.blockId = blockId;
         this.setHarvestLevel("axe", 0);
         this.setHardness(0.5F);
         this.setResistance(15.0F);
@@ -42,6 +57,9 @@ public class BlockGiantChest extends BlockContainerBase {
 
     @Override
     public TileEntity createNewTileEntity(World world, int par2) {
+        if (this.configPages > 0) {
+            return new TileEntityGiantChestConfigurable(this.configPages, this.customDisplayName);
+        }
         switch (this.type) {
             case 1:
                 return new TileEntityGiantChestMedium();
@@ -68,7 +86,7 @@ public class BlockGiantChest extends BlockContainerBase {
             TileEntityGiantChest chest = (TileEntityGiantChest) world.getTileEntity(pos);
             if (chest != null) {
                 chest.fillWithLoot(player);
-                player.openGui(OnlyCrates.INSTANCE, GuiHandler.GuiTypes.GIANT_CHEST.ordinal(), world, pos.getX(), pos.getY(), pos.getZ());
+                player.openGui(OnlyCrates.INSTANCE, GuiHandler.GUI_GIANT_CHEST_BASE, world, pos.getX(), pos.getY(), pos.getZ());
             }
             return true;
         }
@@ -104,6 +122,14 @@ public class BlockGiantChest extends BlockContainerBase {
         return new TheItemBlock(this);
     }
 
+    public String getCustomDisplayName() {
+        return this.customDisplayName;
+    }
+
+    public String getBlockId() {
+        return this.blockId;
+    }
+
     public static class TheItemBlock extends ItemBlockBase {
 
         public TheItemBlock(net.minecraft.block.Block block) {
@@ -118,6 +144,17 @@ public class BlockGiantChest extends BlockContainerBase {
             } else if (type == 0) {
                 tooltip.add(TextFormatting.ITALIC + I18n.format("container." + OnlyCrates.MODID + ".giantChest.desc"));
             }
+        }
+
+        @Override
+        public String getItemStackDisplayName(ItemStack stack) {
+            if (this.block instanceof BlockGiantChest) {
+                String displayName = ((BlockGiantChest) this.block).getCustomDisplayName();
+                if (displayName != null && !displayName.isEmpty()) {
+                    return displayName;
+                }
+            }
+            return super.getItemStackDisplayName(stack);
         }
 
         @Override
