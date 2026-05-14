@@ -1,0 +1,20 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    " W ",
+    "WCW",
+    " W "
+  ],
+  "key": {
+    "W": {
+      "type": "forge:ore_dict",
+      "ore": "plankWood"
+    },
+    "C": {
+      "item": "onlycrates:block_giant_chest"
+    }
+  },
+  "result": {
+    "item": "onlycrates:item_chest_to_crate_upgrade"
+  }
+}
