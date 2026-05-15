@@ -98,11 +98,19 @@ public final class ModConfig {
 
     @Nullable
     public static CrateLevel getCrateLevel(int meta) {
-        if (meta == 0) return new CrateLevel(0, 1);
-        if (meta == 1) return new CrateLevel(1, 2);
-        if (meta == 2) return new CrateLevel(2, 3);
+        if (meta == 0) {
+            return new CrateLevel(0, 1);
+        }
+        if (meta == 1) {
+            return new CrateLevel(1, 2);
+        }
+        if (meta == 2) {
+            return new CrateLevel(2, 3);
+        }
         for (CrateLevel level : extraCrates) {
-            if (level.getMeta() == meta) return level;
+            if (level.getMeta() == meta) {
+                return level;
+            }
         }
         return null;
     }

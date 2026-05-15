@@ -4,8 +4,6 @@ import java.util.UUID;
 
 import com.shiver.onlycrates.util.AwfulUtil;
 import com.shiver.onlycrates.util.ItemStackHandlerAA;
-import com.shiver.onlycrates.util.ItemStackHandlerAA.IAcceptor;
-import com.shiver.onlycrates.util.ItemStackHandlerAA.IRemover;
 import com.shiver.onlycrates.util.StackUtil;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,11 +15,10 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootTable;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class ChestData {
 
-    private static final int SLOTS_PER_PAGE = 9 * 13;
+    public static final int SLOTS_PER_PAGE = 9 * 13;
 
     private final UUID uuid;
     private ItemStackHandlerAA inv;
@@ -37,7 +34,7 @@ public class ChestData {
     }
 
     public ChestData(NBTTagCompound tag) {
-        this.uuid = new UUID(tag.getLong("UUID_MSB"), tag.getLong("UUID_LSB"));
+        this.uuid = UUID.fromString(tag.getString("uuid"));
         this.pageCount = Math.max(1, tag.getInteger("PageCount"));
         this.inv = new ChestStackHandler(this.pageCount * SLOTS_PER_PAGE);
 
@@ -61,8 +58,7 @@ public class ChestData {
 
     public NBTTagCompound serializeNBT() {
         NBTTagCompound tag = new NBTTagCompound();
-        tag.setLong("UUID_MSB", this.uuid.getMostSignificantBits());
-        tag.setLong("UUID_LSB", this.uuid.getLeastSignificantBits());
+        tag.setString("uuid", this.uuid.toString());
         tag.setInteger("PageCount", this.pageCount);
 
         if (this.customDisplayName != null && !this.customDisplayName.isEmpty()) {
@@ -119,7 +115,9 @@ public class ChestData {
     }
 
     public void expandPages(int newPageCount) {
-        if (newPageCount <= this.pageCount) return;
+        if (newPageCount <= this.pageCount) {
+            return;
+        }
         ItemStackHandlerAA newInv = new ChestStackHandler(newPageCount * SLOTS_PER_PAGE);
         for (int i = 0; i < this.inv.getSlots(); i++) {
             newInv.setStackInSlot(i, this.inv.getStackInSlot(i));
@@ -154,16 +152,6 @@ public class ChestData {
 
         ChestStackHandler(int slots) {
             super(slots);
-        }
-
-        @Override
-        public IAcceptor getAcceptor() {
-            return ItemStackHandlerAA.ACCEPT_TRUE;
-        }
-
-        @Override
-        public IRemover getRemover() {
-            return ItemStackHandlerAA.REMOVE_TRUE;
         }
 
         @Override

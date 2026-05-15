@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
 
 public class ItemChestToCrateUpgrade extends Item {
 
-    public static UUID pendingUpgradeUUID = null;
+    public static final ThreadLocal<UUID> pendingUpgradeUUID = new ThreadLocal<>();
 
     private final Class<? extends TileEntity> start;
     @Nullable
@@ -48,12 +48,12 @@ public class ItemChestToCrateUpgrade extends Item {
         ItemStack heldStack = player.getHeldItem(hand);
         if (player.isSneaking()) {
             TileEntity tileHit = world.getTileEntity(pos);
-            boolean matches = false;
+            boolean matches;
             if (this.startState != null) {
                 IBlockState currentState = world.getBlockState(pos);
                 matches = currentState.equals(this.startState);
             } else {
-                matches = tileHit != null && this.start.isInstance(tileHit);
+                matches = this.start.isInstance(tileHit);
             }
             if (tileHit != null && matches) {
                 if (!world.isRemote) {
@@ -64,13 +64,11 @@ public class ItemChestToCrateUpgrade extends Item {
                         sourceInventory = ((TileEntityInventoryBase) tileHit).inv;
                     }
 
-                    // Preserve UUID for crate-to-crate upgrades
                     UUID preservedUUID = null;
                     if (tileHit instanceof TileEntityGiantChest) {
                         preservedUUID = ((TileEntityGiantChest) tileHit).getChestUUID();
                     }
 
-                    // Copy source items before block replacement
                     ItemStack[] copiedItems = null;
                     if (sourceInventory != null) {
                         copiedItems = new ItemStack[sourceInventory.getSlots()];
@@ -80,7 +78,6 @@ public class ItemChestToCrateUpgrade extends Item {
                         }
                     }
 
-                    // For crate-to-crate upgrade: expand ChestData page count before replacing block
                     if (preservedUUID != null) {
                         ChestData data = ChestDataStore.get(world).getData(preservedUUID);
                         if (data != null) {
@@ -92,18 +89,18 @@ public class ItemChestToCrateUpgrade extends Item {
                         }
                     }
 
-                    // Set pending UUID for new TE to pick up
-                    pendingUpgradeUUID = preservedUUID;
+                    pendingUpgradeUUID.set(preservedUUID);
 
                     world.playEvent(2001, pos, Block.getStateId(world.getBlockState(pos)));
                     world.removeTileEntity(pos);
                     world.setBlockState(pos, this.end, 2);
 
-                    pendingUpgradeUUID = null;
+                    pendingUpgradeUUID.remove();
 
-                    if (!player.capabilities.isCreativeMode) heldStack.shrink(1);
+                    if (!player.capabilities.isCreativeMode) {
+                        heldStack.shrink(1);
+                    }
 
-                    // For vanilla chest -> crate: copy items into ChestDataStore
                     if (preservedUUID == null && copiedItems != null) {
                         TileEntity newTile = world.getTileEntity(pos);
                         if (newTile instanceof TileEntityGiantChest) {
@@ -122,7 +119,6 @@ public class ItemChestToCrateUpgrade extends Item {
                             }
                         }
                     }
-                    // For crate-to-crate upgrade: UUID preserved, data stays in ChestDataStore
                 }
                 return EnumActionResult.SUCCESS;
             }

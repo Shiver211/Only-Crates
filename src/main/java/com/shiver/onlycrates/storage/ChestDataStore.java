@@ -26,10 +26,6 @@ public class ChestDataStore extends WorldSavedData {
         super(DATA_ID);
     }
 
-    public ChestDataStore(String name) {
-        super(name);
-    }
-
     public static ChestDataStore get(World world) {
         MapStorage storage = world.getMapStorage();
         ChestDataStore instance = (ChestDataStore) storage.getOrLoadData(ChestDataStore.class, DATA_ID);
@@ -41,13 +37,19 @@ public class ChestDataStore extends WorldSavedData {
     }
 
     public synchronized ChestData getData(UUID uuid) {
-        if (uuid == null) return null;
-        if (this.pendingDeletions.containsKey(uuid)) return null;
+        if (uuid == null) {
+            return null;
+        }
+        if (this.pendingDeletions.containsKey(uuid)) {
+            return null;
+        }
         return this.dataMap.get(uuid);
     }
 
     public synchronized ChestData getOrCreateData(UUID uuid, int pageCount) {
-        if (uuid == null) return null;
+        if (uuid == null) {
+            return null;
+        }
         this.pendingDeletions.remove(uuid);
         ChestData data = this.dataMap.get(uuid);
         if (data == null) {
@@ -58,35 +60,30 @@ public class ChestDataStore extends WorldSavedData {
         return data;
     }
 
-    public synchronized void storeData(ChestData data) {
-        if (data == null || data.getUUID() == null) return;
-        this.pendingDeletions.remove(data.getUUID());
-        this.dataMap.put(data.getUUID(), data);
-        this.markDirty();
-    }
-
     public synchronized void removeData(UUID uuid) {
-        if (uuid == null) return;
+        if (uuid == null) {
+            return;
+        }
         this.dataMap.remove(uuid);
         this.pendingDeletions.remove(uuid);
         this.markDirty();
     }
 
     public synchronized void markForDeletion(UUID uuid) {
-        if (uuid == null) return;
+        if (uuid == null) {
+            return;
+        }
         this.pendingDeletions.put(uuid, System.currentTimeMillis());
         this.markDirty();
     }
 
     public synchronized void cancelDeletion(UUID uuid) {
-        if (uuid == null) return;
+        if (uuid == null) {
+            return;
+        }
         if (this.pendingDeletions.remove(uuid) != null) {
             this.markDirty();
         }
-    }
-
-    public synchronized boolean isPendingDeletion(UUID uuid) {
-        return uuid != null && this.pendingDeletions.containsKey(uuid);
     }
 
     public synchronized void sweepDeletions(World world) {
@@ -100,7 +97,9 @@ public class ChestDataStore extends WorldSavedData {
             UUID uuid = entry.getKey();
             long markedAt = entry.getValue();
 
-            if (now - markedAt < gracePeriod) continue;
+            if (now - markedAt < gracePeriod) {
+                continue;
+            }
 
             boolean hasLoadedTE = false;
             for (TileEntity te : world.loadedTileEntityList) {
@@ -143,7 +142,7 @@ public class ChestDataStore extends WorldSavedData {
             NBTTagList list = nbt.getTagList("PendingDeletions", 10);
             for (int i = 0; i < list.tagCount(); i++) {
                 NBTTagCompound tag = list.getCompoundTagAt(i);
-                UUID uuid = new UUID(tag.getLong("UUID_MSB"), tag.getLong("UUID_LSB"));
+                UUID uuid = UUID.fromString(tag.getString("uuid"));
                 long timestamp = tag.getLong("Timestamp");
                 this.pendingDeletions.put(uuid, timestamp);
             }
@@ -161,8 +160,7 @@ public class ChestDataStore extends WorldSavedData {
         NBTTagList pendingList = new NBTTagList();
         for (Map.Entry<UUID, Long> entry : this.pendingDeletions.entrySet()) {
             NBTTagCompound tag = new NBTTagCompound();
-            tag.setLong("UUID_MSB", entry.getKey().getMostSignificantBits());
-            tag.setLong("UUID_LSB", entry.getKey().getLeastSignificantBits());
+            tag.setString("uuid", entry.getKey().toString());
             tag.setLong("Timestamp", entry.getValue());
             pendingList.appendTag(tag);
         }

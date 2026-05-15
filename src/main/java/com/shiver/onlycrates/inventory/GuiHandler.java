@@ -6,7 +6,6 @@ import com.shiver.onlycrates.inventory.gui.GuiGiantChest;
 import com.shiver.onlycrates.storage.ChestData;
 import com.shiver.onlycrates.storage.ChestDataStore;
 import com.shiver.onlycrates.tile.TileEntityGiantChest;
-import com.shiver.onlycrates.util.ItemStackHandlerAA;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -31,9 +30,13 @@ public class GuiHandler implements IGuiHandler {
         if (tile instanceof TileEntityGiantChest) {
             TileEntityGiantChest chest = (TileEntityGiantChest) tile;
             UUID uuid = chest.getChestUUID();
-            if (uuid == null) return null;
+            if (uuid == null) {
+                return null;
+            }
             ChestData data = ChestDataStore.get(world).getData(uuid);
-            if (data == null) return null;
+            if (data == null) {
+                return null;
+            }
             int page = id - GUI_GIANT_CHEST_BASE;
             if (page >= 0 && page < data.getPageCount()) {
                 return new ContainerGiantChest(player.inventory, uuid, data.getInventory(), page);

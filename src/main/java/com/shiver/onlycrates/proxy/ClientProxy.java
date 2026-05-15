@@ -20,7 +20,7 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public static void onModelRegistry(ModelRegistryEvent event) {
-        // Register item models for each crate meta variant
+
         for (int meta = 0; meta <= 2; meta++) {
             registerCrateItemModel(meta);
         }

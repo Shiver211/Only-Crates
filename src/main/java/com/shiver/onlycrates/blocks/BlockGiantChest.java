@@ -140,20 +140,6 @@ public class BlockGiantChest extends BlockContainerBase {
             NBTTagCompound data = new NBTTagCompound();
             chest.writeSyncableNBT(data, TileEntityBase.NBTType.SAVE_BLOCK);
 
-            // Remove zero-valued int keys for compactness
-            java.util.List<String> keysToRemove = new java.util.ArrayList<>();
-            for (String key : data.getKeySet()) {
-                net.minecraft.nbt.NBTBase tag = data.getTag(key);
-                if (tag instanceof net.minecraft.nbt.NBTTagInt) {
-                    if (((net.minecraft.nbt.NBTTagInt) tag).getInt() == 0) {
-                        keysToRemove.add(key);
-                    }
-                }
-            }
-            for (String key : keysToRemove) {
-                data.removeTag(key);
-            }
-
             ItemStack stack = new ItemStack(this.getItemDropped(state, ((World) world).rand, fortune), 1, this.damageDropped(state));
             if (!data.isEmpty()) {
                 stack.setTagCompound(new NBTTagCompound());
@@ -169,12 +155,11 @@ public class BlockGiantChest extends BlockContainerBase {
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entity, ItemStack stack) {
         if (stack.hasTagCompound()) {
             NBTTagCompound data = stack.getTagCompound().getCompoundTag("Data");
-            if (data.hasKey("CrateUUID_MSB")) {
+            if (data.hasKey("uuid")) {
                 TileEntity te = world.getTileEntity(pos);
                 if (te instanceof TileEntityGiantChest) {
                     TileEntityGiantChest chest = (TileEntityGiantChest) te;
-                    UUID uuid = new UUID(data.getLong("CrateUUID_MSB"), data.getLong("CrateUUID_LSB"));
-                    chest.setUUID(uuid);
+                    chest.setUUID(UUID.fromString(data.getString("uuid")));
                     chest.ensureDataExists();
                 }
             }
