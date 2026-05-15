@@ -17,6 +17,7 @@ public final class ModConfig {
     private static final String KEY_EXTRA_CRATES = "extra_crates";
 
     private static List<CrateLevel> extraCrates = new ArrayList<>();
+    private static File customTexturesFolder;
 
     private ModConfig() {}
 
@@ -25,6 +26,11 @@ public final class ModConfig {
         File onlyCratesFolder = new File(configFolder, "onlycrates");
         if (!onlyCratesFolder.exists()) {
             onlyCratesFolder.mkdirs();
+        }
+
+        customTexturesFolder = new File(onlyCratesFolder, "textures");
+        if (!customTexturesFolder.exists()) {
+            customTexturesFolder.mkdirs();
         }
 
         File configFile = new File(onlyCratesFolder, "onlycrates.cfg");
@@ -50,6 +56,10 @@ public final class ModConfig {
 
     public static List<CrateLevel> getExtraCrates() {
         return Collections.unmodifiableList(extraCrates);
+    }
+
+    public static File getCustomTexturesFolder() {
+        return customTexturesFolder;
     }
 
     private static List<CrateLevel> parseEntries(String[] entries) {

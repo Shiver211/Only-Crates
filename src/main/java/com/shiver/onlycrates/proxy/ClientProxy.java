@@ -1,6 +1,9 @@
 package com.shiver.onlycrates.proxy;
 
+import java.util.Objects;
+
 import com.shiver.onlycrates.OnlyCrates;
+import com.shiver.onlycrates.client.CustomCrateResourcePack;
 import com.shiver.onlycrates.registry.ModBlocks;
 import com.shiver.onlycrates.registry.ModItems;
 
@@ -17,20 +20,14 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.Objects;
-
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(modid = OnlyCrates.MODID, value = Side.CLIENT)
 public class ClientProxy extends CommonProxy {
 
-    private static final ModelResourceLocation CRATE_BLOCK_MODEL = new ModelResourceLocation(new ResourceLocation(OnlyCrates.MODID, "block_giant_chest"), "normal");
-    private static final ModelResourceLocation CRATE_ITEM_MODEL = new ModelResourceLocation(new ResourceLocation(OnlyCrates.MODID, "block_giant_chest"), "inventory");
-    private static final StateMapperBase CRATE_STATE_MAPPER = new StateMapperBase() {
-        @Override
-        protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
-            return CRATE_BLOCK_MODEL;
-        }
-    };
+    @Override
+    public void preInit() {
+        CustomCrateResourcePack.register();
+    }
 
     @SubscribeEvent
     public static void onModelRegistry(ModelRegistryEvent event) {
@@ -51,7 +48,13 @@ public class ClientProxy extends CommonProxy {
     }
 
     private static void registerExtraCrateModel(Block block) {
-        ModelLoader.setCustomStateMapper(block, CRATE_STATE_MAPPER);
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), 0, CRATE_ITEM_MODEL);
+        ResourceLocation registryName = Objects.requireNonNull(block.getRegistryName());
+        ModelLoader.setCustomStateMapper(block, new StateMapperBase() {
+            @Override
+            protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
+                return new ModelResourceLocation(registryName, "normal");
+            }
+        });
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), 0, new ModelResourceLocation(registryName, "inventory"));
     }
 }
