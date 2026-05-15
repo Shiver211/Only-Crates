@@ -16,6 +16,7 @@ public final class ModConfig {
     private static final String KEY_EXTRA_PAGES = "extra_crate_pages";
 
     private static List<CrateLevel> extraCrates = new ArrayList<>();
+    private static long cleanupGracePeriodMs = 30 * 60 * 1000L;
 
     private ModConfig() {}
 
@@ -48,6 +49,13 @@ public final class ModConfig {
             ).getIntList();
 
             extraCrates = buildExtraCrates(count, pages);
+
+            cleanupGracePeriodMs = config.getInt(
+                    "cleanup_grace_period_minutes",
+                    CATEGORY_CRATES,
+                    30, 1, 1440,
+                    "Minutes to wait before deleting orphaned crate data (UUID with no active block). Set high for safety."
+            ) * 60L * 1000L;
         } finally {
             if (config.hasChanged()) {
                 config.save();
@@ -57,6 +65,10 @@ public final class ModConfig {
 
     public static List<CrateLevel> getExtraCrates() {
         return Collections.unmodifiableList(extraCrates);
+    }
+
+    public static long getCleanupGracePeriodMs() {
+        return cleanupGracePeriodMs;
     }
 
     private static List<CrateLevel> buildExtraCrates(int count, int[] pages) {

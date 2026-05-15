@@ -1,11 +1,14 @@
 package com.shiver.onlycrates.blocks;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.shiver.onlycrates.OnlyCrates;
 import com.shiver.onlycrates.Tags;
 import com.shiver.onlycrates.config.ModConfig;
 import com.shiver.onlycrates.inventory.GuiHandler;
+import com.shiver.onlycrates.storage.ChestDataStore;
+import com.shiver.onlycrates.tile.TileEntityBase;
 import com.shiver.onlycrates.tile.TileEntityGiantChest;
 
 import net.minecraft.block.SoundType;
@@ -21,7 +24,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -29,8 +31,8 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class BlockGiantChest extends BlockContainerBase {
 
@@ -101,17 +103,79 @@ public class BlockGiantChest extends BlockContainerBase {
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entity, ItemStack stack) {
-        if (stack.getTagCompound() != null) {
-            TileEntity tile = world.getTileEntity(pos);
-            if (tile instanceof TileEntityGiantChest) {
-                NBTTagList list = stack.getTagCompound().getTagList("Items", 10);
-                IItemHandlerModifiable inv = ((TileEntityGiantChest) tile).inv;
-                for (int i = 0; i < list.tagCount(); i++) {
-                    NBTTagCompound compound = list.getCompoundTagAt(i);
-                    if (compound != null && compound.hasKey("id")) {
-                        inv.setStackInSlot(i, new ItemStack(list.getCompoundTagAt(i)));
+    public boolean shouldDropInventory(World world, BlockPos pos) {
+        return false;
+    }
+
+    @Override
+    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+        if (!world.isRemote) {
+            TileEntity te = world.getTileEntity(pos);
+            if (te instanceof TileEntityGiantChest) {
+                TileEntityGiantChest chest = (TileEntityGiantChest) te;
+                UUID uuid = chest.getChestUUID();
+                if (uuid != null && !isPistonMove(world, pos)) {
+                    ChestDataStore.get(world).markForDeletion(uuid);
+                }
+            }
+        }
+        super.breakBlock(world, pos, state);
+    }
+
+    private boolean isPistonMove(World world, BlockPos pos) {
+        for (EnumFacing facing : EnumFacing.values()) {
+            TileEntity te = world.getTileEntity(pos.offset(facing));
+            if (te instanceof net.minecraft.tileentity.TileEntityPiston) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof TileEntityGiantChest) {
+            TileEntityGiantChest chest = (TileEntityGiantChest) te;
+            NBTTagCompound data = new NBTTagCompound();
+            chest.writeSyncableNBT(data, TileEntityBase.NBTType.SAVE_BLOCK);
+
+            // Remove zero-valued int keys for compactness
+            java.util.List<String> keysToRemove = new java.util.ArrayList<>();
+            for (String key : data.getKeySet()) {
+                net.minecraft.nbt.NBTBase tag = data.getTag(key);
+                if (tag instanceof net.minecraft.nbt.NBTTagInt) {
+                    if (((net.minecraft.nbt.NBTTagInt) tag).getInt() == 0) {
+                        keysToRemove.add(key);
                     }
+                }
+            }
+            for (String key : keysToRemove) {
+                data.removeTag(key);
+            }
+
+            ItemStack stack = new ItemStack(this.getItemDropped(state, ((World) world).rand, fortune), 1, this.damageDropped(state));
+            if (!data.isEmpty()) {
+                stack.setTagCompound(new NBTTagCompound());
+                stack.getTagCompound().setTag("Data", data);
+            }
+            drops.add(stack);
+        } else {
+            super.getDrops(drops, world, pos, state, fortune);
+        }
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entity, ItemStack stack) {
+        if (stack.hasTagCompound()) {
+            NBTTagCompound data = stack.getTagCompound().getCompoundTag("Data");
+            if (data.hasKey("CrateUUID_MSB")) {
+                TileEntity te = world.getTileEntity(pos);
+                if (te instanceof TileEntityGiantChest) {
+                    TileEntityGiantChest chest = (TileEntityGiantChest) te;
+                    UUID uuid = new UUID(data.getLong("CrateUUID_MSB"), data.getLong("CrateUUID_LSB"));
+                    chest.setUUID(uuid);
+                    chest.ensureDataExists();
                 }
             }
         }

@@ -1,11 +1,11 @@
 package com.shiver.onlycrates.inventory.gui;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import com.shiver.onlycrates.Tags;
 import com.shiver.onlycrates.inventory.ContainerGiantChest;
 import com.shiver.onlycrates.network.NetworkHandler;
-import com.shiver.onlycrates.tile.TileEntityBase;
 import com.shiver.onlycrates.tile.TileEntityGiantChest;
 
 import net.minecraft.client.gui.GuiButton;
@@ -14,6 +14,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import com.shiver.onlycrates.util.ItemStackHandlerAA;
 
 @SideOnly(Side.CLIENT)
 public class GuiGiantChest extends GuiBase {
@@ -21,12 +22,14 @@ public class GuiGiantChest extends GuiBase {
     private static final ResourceLocation RES_LOC = new ResourceLocation(Tags.MOD_ID, "textures/gui/gui_giant_chest.png");
     private static final ResourceLocation INVENTORY_LOC = new ResourceLocation(Tags.MOD_ID, "textures/gui/gui_inventory.png");
 
+    private final UUID chestUUID;
     private final TileEntityGiantChest chest;
     private final int page;
 
-    public GuiGiantChest(InventoryPlayer inventory, TileEntityBase tile, int page) {
-        super(new ContainerGiantChest(inventory, tile, page));
-        this.chest = (TileEntityGiantChest) tile;
+    public GuiGiantChest(InventoryPlayer inventory, UUID chestUUID, int page, TileEntityGiantChest chest) {
+        super(new ContainerGiantChest(inventory, chestUUID, new ItemStackHandlerAA(chest.getPageCount() * 9 * 13), page));
+        this.chestUUID = chestUUID;
+        this.chest = chest;
         this.page = page;
         this.xSize = 242;
         this.ySize = 172 + 86;
@@ -47,7 +50,7 @@ public class GuiGiantChest extends GuiBase {
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         if (button.id >= 0 && button.id < this.chest.getPageCount()) {
-            NetworkHandler.sendButtonPacket(this.chest, button.id);
+            NetworkHandler.sendButtonPacket(this.chestUUID, this.chest.getPos(), this.chest.getWorld().provider.getDimension(), button.id);
         }
     }
 
