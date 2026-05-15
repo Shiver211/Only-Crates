@@ -1,6 +1,7 @@
 package com.shiver.onlycrates.inventory.gui;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import com.shiver.onlycrates.OnlyCrates;
 import com.shiver.onlycrates.inventory.ContainerGiantChest;
@@ -53,7 +54,7 @@ public class GuiGiantChest extends GuiBase {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int x, int y) {
-        String text = this.chest.getDisplayName().getFormattedText();
+        String text = Objects.requireNonNull(this.chest.getDisplayName()).getFormattedText();
         this.fontRenderer.drawString(text, this.xSize / 2 - this.fontRenderer.getStringWidth(text) / 2, -10, 16777215);
     }
 

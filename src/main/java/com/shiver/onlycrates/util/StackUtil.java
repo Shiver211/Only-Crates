@@ -29,7 +29,7 @@ public final class StackUtil {
     }
 
     public static int getPlaceAt(List<ItemStack> list, ItemStack stack, boolean checkWildcard) {
-        if (list != null && list.size() > 0) {
+        if (list != null && !list.isEmpty()) {
             for (int i = 0; i < list.size(); i++) {
                 if (!isValid(stack) && !isValid(list.get(i)) || areItemsEqual(stack, list.get(i), checkWildcard)) {
                     return i;

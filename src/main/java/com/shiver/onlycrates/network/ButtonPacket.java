@@ -8,13 +8,13 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+import java.util.Objects;
+
 public class ButtonPacket implements IMessage {
 
     private BlockPos pos;
     private int dimension;
     private int buttonId;
-
-    public ButtonPacket() {}
 
     public ButtonPacket(BlockPos pos, int dimension, int buttonId) {
         this.pos = pos;
@@ -42,12 +42,10 @@ public class ButtonPacket implements IMessage {
         @Override
         public IMessage onMessage(final ButtonPacket message, final MessageContext ctx) {
             ctx.getServerHandler().player.getServerWorld().addScheduledTask(() -> {
-                WorldServer world = ctx.getServerHandler().player.getServer().getWorld(message.dimension);
-                if (world != null) {
-                    TileEntity tile = world.getTileEntity(message.pos);
-                    if (tile instanceof IButtonReactor) {
-                        ((IButtonReactor) tile).onButtonPressed(message.buttonId, ctx.getServerHandler().player);
-                    }
+                WorldServer world = Objects.requireNonNull(ctx.getServerHandler().player.getServer()).getWorld(message.dimension);
+                TileEntity tile = world.getTileEntity(message.pos);
+                if (tile instanceof IButtonReactor) {
+                    ((IButtonReactor) tile).onButtonPressed(message.buttonId, ctx.getServerHandler().player);
                 }
             });
             return null;

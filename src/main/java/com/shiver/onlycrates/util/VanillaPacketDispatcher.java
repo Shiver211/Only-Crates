@@ -7,6 +7,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
+import java.util.Objects;
+
 public final class VanillaPacketDispatcher {
 
     public static void dispatchTEToNearbyPlayers(TileEntity tile) {
@@ -16,7 +18,7 @@ public final class VanillaPacketDispatcher {
         if (entry == null) return;
 
         for (EntityPlayerMP player : entry.getWatchingPlayers())
-            player.connection.sendPacket(tile.getUpdatePacket());
+            player.connection.sendPacket(Objects.requireNonNull(tile.getUpdatePacket()));
     }
 
     public static void dispatchTEToNearbyPlayers(World world, BlockPos pos) {

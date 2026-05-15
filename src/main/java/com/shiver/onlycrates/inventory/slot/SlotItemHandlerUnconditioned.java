@@ -41,7 +41,7 @@ public class SlotItemHandlerUnconditioned extends SlotItemHandler {
 
     @Override
     public boolean canTakeStack(EntityPlayer playerIn) {
-        return this.inv.extractItem(this.getSlotIndex(), 1, true, false).isEmpty() == false;
+        return !this.inv.extractItem(this.getSlotIndex(), 1, true, false).isEmpty();
     }
 
     @Override

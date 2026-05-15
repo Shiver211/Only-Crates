@@ -47,7 +47,7 @@ public class TileEntityGiantChestConfigurable extends TileEntityGiantChest {
     }
 
     private static int clampPages(int pages) {
-        return pages < 1 ? 1 : pages;
+        return Math.max(pages, 1);
     }
 
     private static int getSlotCount(int pages) {

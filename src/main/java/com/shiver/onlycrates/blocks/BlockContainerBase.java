@@ -94,7 +94,10 @@ public abstract class BlockContainerBase extends BlockContainer implements ItemB
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof TileEntityBase) {
                 TileEntityBase base = (TileEntityBase) tile;
-                NBTTagCompound compound = stack.getTagCompound().getCompoundTag("Data");
+                NBTTagCompound compound = null;
+                if (stack.getTagCompound() != null) {
+                    compound = stack.getTagCompound().getCompoundTag("Data");
+                }
                 if (compound != null) {
                     base.readSyncableNBT(compound, TileEntityBase.NBTType.SAVE_BLOCK);
                 }
@@ -138,7 +141,9 @@ public abstract class BlockContainerBase extends BlockContainer implements ItemB
             ItemStack stack = new ItemStack(this.getItemDropped(state, tile.getWorld().rand, fortune), 1, this.damageDropped(state));
             if (!data.isEmpty()) {
                 stack.setTagCompound(new NBTTagCompound());
-                stack.getTagCompound().setTag("Data", data);
+                if (stack.getTagCompound() != null) {
+                    stack.getTagCompound().setTag("Data", data);
+                }
             }
 
             drops.add(stack);

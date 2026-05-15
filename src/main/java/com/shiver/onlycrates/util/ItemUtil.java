@@ -2,6 +2,7 @@ package com.shiver.onlycrates.util;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import com.shiver.onlycrates.OnlyCrates;
 import com.shiver.onlycrates.blocks.ItemBlockBase;
@@ -19,7 +20,7 @@ public final class ItemUtil {
         block.setRegistryName(OnlyCrates.MODID, name);
         RegistryHandler.BLOCKS_TO_REGISTER.add(block);
 
-        itemBlock.setRegistryName(block.getRegistryName());
+        itemBlock.setRegistryName(Objects.requireNonNull(block.getRegistryName()));
         RegistryHandler.ITEMS_TO_REGISTER.add(itemBlock);
 
         block.setCreativeTab(addTab ? OnlyCratesTab.INSTANCE : null);
@@ -41,7 +42,7 @@ public final class ItemUtil {
     }
 
     public static int getPlaceAt(List<ItemStack> list, ItemStack stack, boolean checkWildcard) {
-        if (list != null && list.size() > 0) {
+        if (list != null && !list.isEmpty()) {
             for (int i = 0; i < list.size(); i++) {
                 if (!StackUtil.isValid(stack) && !StackUtil.isValid(list.get(i)) || areItemsEqual(stack, list.get(i), checkWildcard)) {
                     return i;

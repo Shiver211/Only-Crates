@@ -35,7 +35,7 @@ public class ItemChestToCrateUpgrade extends Item {
         ItemStack heldStack = player.getHeldItem(hand);
         if (player.isSneaking()) {
             TileEntity tileHit = world.getTileEntity(pos);
-            if (tileHit != null && this.start.isInstance(tileHit)) {
+            if (this.start.isInstance(tileHit)) {
                 if (!world.isRemote) {
                     IItemHandlerModifiable chest = null;
                     if (tileHit instanceof IInventory) {

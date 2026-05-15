@@ -8,8 +8,6 @@ public class ItemStackHandlerAA extends ItemStackHandler {
 
     public static final IAcceptor ACCEPT_TRUE = (a, b, c) -> true;
     public static final IRemover REMOVE_TRUE = (a, b) -> true;
-    public static final IAcceptor ACCEPT_FALSE = (a, b, c) -> false;
-    public static final IRemover REMOVE_FALSE = (a, b) -> false;
 
     IAcceptor acceptor;
     IRemover remover;

@@ -17,6 +17,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.Objects;
+
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(modid = OnlyCrates.MODID, value = Side.CLIENT)
 public class ClientProxy extends CommonProxy {
@@ -32,20 +34,20 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public static void onModelRegistry(ModelRegistryEvent event) {
-        registerItemModel(Item.getItemFromBlock(ModBlocks.blockGiantChest), 0);
-        registerItemModel(Item.getItemFromBlock(ModBlocks.blockGiantChestMedium), 0);
-        registerItemModel(Item.getItemFromBlock(ModBlocks.blockGiantChestLarge), 0);
+        registerItemModel(Item.getItemFromBlock(ModBlocks.blockGiantChest));
+        registerItemModel(Item.getItemFromBlock(ModBlocks.blockGiantChestMedium));
+        registerItemModel(Item.getItemFromBlock(ModBlocks.blockGiantChestLarge));
         for (Block block : ModBlocks.getExtraCrates()) {
             registerExtraCrateModel(block);
         }
 
-        registerItemModel(ModItems.itemChestToCrateUpgrade, 0);
-        registerItemModel(ModItems.itemSmallToMediumCrateUpgrade, 0);
-        registerItemModel(ModItems.itemMediumToLargeCrateUpgrade, 0);
+        registerItemModel(ModItems.itemChestToCrateUpgrade);
+        registerItemModel(ModItems.itemSmallToMediumCrateUpgrade);
+        registerItemModel(ModItems.itemMediumToLargeCrateUpgrade);
     }
 
-    private static void registerItemModel(Item item, int meta) {
-        ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(item.getRegistryName(), "inventory"));
+    private static void registerItemModel(Item item) {
+        ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(Objects.requireNonNull(item.getRegistryName()), "inventory"));
     }
 
     private static void registerExtraCrateModel(Block block) {
