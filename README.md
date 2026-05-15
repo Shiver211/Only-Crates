@@ -25,9 +25,9 @@
 通过配置文件 `config/onlycrates/onlycrates.cfg` 可添加自定义存储箱，格式为 `方块ID/显示名称/页数`：
 
 ```
-extra_crates {
+crates {
     S:extra_crates <
-        "mega_crate/超大型板条箱/5"
+        mega_crate/超大型板条箱/5
     >
 }
 ```
