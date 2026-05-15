@@ -1,9 +1,13 @@
 tile.onlycrates.block_giant_chest.name=Small Storage Crate
 tile.onlycrates.block_giant_chest_medium.name=Medium Storage Crate
 tile.onlycrates.block_giant_chest_large.name=Large Storage Crate
-item.onlycrates.item_chest_to_crate_upgrade.name=Chest To Storage Crate Upgrade
-item.onlycrates.item_small_to_medium_crate_upgrade.name=Small To Medium Storage Crate Upgrade
-item.onlycrates.item_medium_to_large_crate_upgrade.name=Medium To Large Storage Crate Upgrade
+item.onlycrates.item_chest_to_crate_upgrade.name=Chest To Crate Upgrade
+item.onlycrates.item_small_to_medium_crate_upgrade.name=Small To Medium Upgrade
+item.onlycrates.item_medium_to_large_crate_upgrade.name=Medium To Large Upgrade
+item.onlycrates.item_shulker_upgrade.name=Shulker Upgrade
+item.onlycrates.item_blast_proof_upgrade.name=Blast Proof Upgrade
+tooltip.onlycrates.shulker_upgrade=Keeps items when the crate is broken
+tooltip.onlycrates.blast_proof_upgrade=Prevents explosions from destroying the crate
 container.onlycrates.giantChest.name=Small Storage Crate
 container.onlycrates.giantChest.desc='Small'
 container.onlycrates.giantChestMedium.name=Medium Storage Crate

@@ -18,9 +18,13 @@ import net.minecraft.world.storage.loot.LootTable;
 public class TileEntityGiantChest extends TileEntityInventoryBase implements IButtonReactor, ILootContainer {
 
     private static final int SLOTS_PER_PAGE = 9 * 13;
+    private static final String TAG_SHULKER_UPGRADE = "ShulkerUpgrade";
+    private static final String TAG_BLAST_PROOF_UPGRADE = "BlastProofUpgrade";
 
     public ResourceLocation lootTable;
     private String customDisplayName;
+    private boolean shulkerUpgrade;
+    private boolean blastProofUpgrade;
 
     public TileEntityGiantChest(int slotAmount, String name) {
         this(slotAmount, name, null);
@@ -48,6 +52,32 @@ public class TileEntityGiantChest extends TileEntityInventoryBase implements IBu
         return this.customDisplayName;
     }
 
+    public boolean hasShulkerUpgrade() {
+        return this.shulkerUpgrade;
+    }
+
+    public boolean hasBlastProofUpgrade() {
+        return this.blastProofUpgrade;
+    }
+
+    public boolean applyShulkerUpgrade() {
+        if (this.shulkerUpgrade) {
+            return false;
+        }
+        this.shulkerUpgrade = true;
+        this.markDirty();
+        return true;
+    }
+
+    public boolean applyBlastProofUpgrade() {
+        if (this.blastProofUpgrade) {
+            return false;
+        }
+        this.blastProofUpgrade = true;
+        this.markDirty();
+        return true;
+    }
+
     @Override
     public ITextComponent getDisplayName() {
         if (this.customDisplayName != null && !this.customDisplayName.isEmpty()) {
@@ -59,6 +89,12 @@ public class TileEntityGiantChest extends TileEntityInventoryBase implements IBu
     @Override
     public void writeSyncableNBT(NBTTagCompound compound, NBTType type) {
         super.writeSyncableNBT(compound, type);
+        if (this.shulkerUpgrade) {
+            compound.setBoolean(TAG_SHULKER_UPGRADE, true);
+        }
+        if (this.blastProofUpgrade) {
+            compound.setBoolean(TAG_BLAST_PROOF_UPGRADE, true);
+        }
         if (this.lootTable != null) {
             compound.setString("LootTable", this.lootTable.toString());
         }
@@ -67,6 +103,8 @@ public class TileEntityGiantChest extends TileEntityInventoryBase implements IBu
     @Override
     public void readSyncableNBT(NBTTagCompound compound, NBTType type) {
         super.readSyncableNBT(compound, type);
+        this.shulkerUpgrade = compound.getBoolean(TAG_SHULKER_UPGRADE);
+        this.blastProofUpgrade = compound.getBoolean(TAG_BLAST_PROOF_UPGRADE);
         if (compound.hasKey("LootTable")) {
             this.lootTable = new ResourceLocation(compound.getString("LootTable"));
         }

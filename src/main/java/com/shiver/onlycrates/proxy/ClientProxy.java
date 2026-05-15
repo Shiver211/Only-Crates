@@ -41,6 +41,8 @@ public class ClientProxy extends CommonProxy {
         registerItemModel(ModItems.itemChestToCrateUpgrade);
         registerItemModel(ModItems.itemSmallToMediumCrateUpgrade);
         registerItemModel(ModItems.itemMediumToLargeCrateUpgrade);
+        registerItemModel(ModItems.itemShulkerUpgrade);
+        registerItemModel(ModItems.itemBlastProofUpgrade);
     }
 
     private static void registerItemModel(Item item) {
