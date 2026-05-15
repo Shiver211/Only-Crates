@@ -4,6 +4,8 @@ import com.shiver.onlycrates.tile.TileEntityCrate;
 import com.shiver.onlycrates.tile.TileEntityInventoryBase;
 import com.shiver.onlycrates.util.StackUtil;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,10 +26,17 @@ public class ItemChestToCrateUpgrade extends Item {
 
     private final Class<? extends TileEntity> start;
     private final IBlockState end;
+    @Nullable
+    private final Block expectedBlock;
 
     public ItemChestToCrateUpgrade(String name, Class<? extends TileEntity> start, IBlockState end) {
+        this(name, start, end, null);
+    }
+
+    public ItemChestToCrateUpgrade(String name, Class<? extends TileEntity> start, IBlockState end, @Nullable Block expectedBlock) {
         this.start = start;
         this.end = end;
+        this.expectedBlock = expectedBlock;
         this.setMaxStackSize(64);
     }
 
@@ -35,6 +44,9 @@ public class ItemChestToCrateUpgrade extends Item {
     public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
         ItemStack heldStack = player.getHeldItem(hand);
         if (player.isSneaking()) {
+            if (this.expectedBlock != null && world.getBlockState(pos).getBlock() != this.expectedBlock) {
+                return EnumActionResult.PASS;
+            }
             TileEntity tileHit = world.getTileEntity(pos);
             if (this.start.isInstance(tileHit)) {
                 if (!world.isRemote) {

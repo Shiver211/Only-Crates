@@ -21,10 +21,10 @@ public class ModItems {
         itemChestToCrateUpgrade = new ItemChestToCrateUpgrade("chest_to_crate_upgrade", TileEntityChest.class, ModBlocks.blockCrate.getDefaultState());
         ItemUtil.registerItem(itemChestToCrateUpgrade, "chest_to_crate_upgrade", true);
 
-        itemSmallToMediumCrateUpgrade = new ItemChestToCrateUpgrade("small_to_medium_crate_upgrade", TileEntityCrate.class, ModBlocks.blockCrateMedium.getDefaultState());
+        itemSmallToMediumCrateUpgrade = new ItemChestToCrateUpgrade("small_to_medium_crate_upgrade", TileEntityCrate.class, ModBlocks.blockCrateMedium.getDefaultState(), ModBlocks.blockCrate);
         ItemUtil.registerItem(itemSmallToMediumCrateUpgrade, "small_to_medium_crate_upgrade", true);
 
-        itemMediumToLargeCrateUpgrade = new ItemChestToCrateUpgrade("medium_to_large_crate_upgrade", TileEntityCrateMedium.class, ModBlocks.blockCrateLarge.getDefaultState());
+        itemMediumToLargeCrateUpgrade = new ItemChestToCrateUpgrade("medium_to_large_crate_upgrade", TileEntityCrateMedium.class, ModBlocks.blockCrateLarge.getDefaultState(), ModBlocks.blockCrateMedium);
         ItemUtil.registerItem(itemMediumToLargeCrateUpgrade, "medium_to_large_crate_upgrade", true);
 
         itemShulkerUpgrade = new ItemCrateUpgrade(ItemCrateUpgrade.UpgradeType.SHULKER);
