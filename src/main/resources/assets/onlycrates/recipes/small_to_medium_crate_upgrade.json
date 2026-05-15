@@ -11,7 +11,7 @@
       "ore": "plankWood"
     },
     "C": {
-      "item": "onlycrates:giant_chest_medium"
+      "item": "onlycrates:crate_medium"
     }
   },
   "result": {

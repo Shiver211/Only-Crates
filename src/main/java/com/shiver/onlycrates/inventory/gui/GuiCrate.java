@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.util.Objects;
 
 import com.shiver.onlycrates.OnlyCrates;
-import com.shiver.onlycrates.inventory.ContainerGiantChest;
+import com.shiver.onlycrates.inventory.ContainerCrate;
 import com.shiver.onlycrates.network.NetworkHandler;
 import com.shiver.onlycrates.tile.TileEntityBase;
-import com.shiver.onlycrates.tile.TileEntityGiantChest;
+import com.shiver.onlycrates.tile.TileEntityCrate;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
@@ -17,17 +17,17 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class GuiGiantChest extends GuiBase {
+public class GuiCrate extends GuiBase {
 
-    private static final ResourceLocation RES_LOC = new ResourceLocation(OnlyCrates.MODID, "textures/gui/gui_giant_chest.png");
+    private static final ResourceLocation RES_LOC = new ResourceLocation(OnlyCrates.MODID, "textures/gui/gui_crate.png");
     private static final ResourceLocation INVENTORY_LOC = new ResourceLocation(OnlyCrates.MODID, "textures/gui/gui_inventory.png");
 
-    private final TileEntityGiantChest chest;
+    private final TileEntityCrate chest;
     private final int page;
 
-    public GuiGiantChest(InventoryPlayer inventory, TileEntityBase tile, int page) {
-        super(new ContainerGiantChest(inventory, tile, page));
-        this.chest = (TileEntityGiantChest) tile;
+    public GuiCrate(InventoryPlayer inventory, TileEntityBase tile, int page) {
+        super(new ContainerCrate(inventory, tile, page));
+        this.chest = (TileEntityCrate) tile;
         this.page = page;
         this.xSize = 242;
         this.ySize = 172 + 86;

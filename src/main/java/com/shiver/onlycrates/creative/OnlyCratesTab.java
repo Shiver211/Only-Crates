@@ -16,6 +16,6 @@ public class OnlyCratesTab extends CreativeTabs {
 
     @Override
     public ItemStack createIcon() {
-        return new ItemStack(ModBlocks.blockGiantChest);
+        return new ItemStack(ModBlocks.blockCrate);
     }
 }

@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import com.shiver.onlycrates.tile.TileEntityGiantChest;
+import com.shiver.onlycrates.tile.TileEntityCrate;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -53,12 +53,12 @@ public class ItemCrateUpgrade extends Item {
         }
 
         TileEntity tile = world.getTileEntity(pos);
-        if (!(tile instanceof TileEntityGiantChest)) {
+        if (!(tile instanceof TileEntityCrate)) {
             return EnumActionResult.PASS;
         }
 
         if (!world.isRemote) {
-            TileEntityGiantChest chest = (TileEntityGiantChest) tile;
+            TileEntityCrate chest = (TileEntityCrate) tile;
             boolean applied = false;
             switch (this.type) {
                 case SHULKER:

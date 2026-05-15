@@ -1,9 +1,9 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "onlycrates:giant_chest",
+    "model": "onlycrates:crate_large",
     "textures": {
-      "particle": "onlycrates:blocks/giant_chest"
+      "particle": "onlycrates:blocks/crate_large"
     },
     "transform": "forge:default-block"
   },

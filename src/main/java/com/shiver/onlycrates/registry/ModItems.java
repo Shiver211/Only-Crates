@@ -2,8 +2,8 @@ package com.shiver.onlycrates.registry;
 
 import com.shiver.onlycrates.items.ItemChestToCrateUpgrade;
 import com.shiver.onlycrates.items.ItemCrateUpgrade;
-import com.shiver.onlycrates.tile.TileEntityGiantChest;
-import com.shiver.onlycrates.tile.TileEntityGiantChestMedium;
+import com.shiver.onlycrates.tile.TileEntityCrate;
+import com.shiver.onlycrates.tile.TileEntityCrateMedium;
 import com.shiver.onlycrates.util.ItemUtil;
 
 import net.minecraft.tileentity.TileEntityChest;
@@ -18,13 +18,13 @@ public class ModItems {
 
     public static void init() {
 
-        itemChestToCrateUpgrade = new ItemChestToCrateUpgrade("chest_to_crate_upgrade", TileEntityChest.class, ModBlocks.blockGiantChest.getDefaultState());
+        itemChestToCrateUpgrade = new ItemChestToCrateUpgrade("chest_to_crate_upgrade", TileEntityChest.class, ModBlocks.blockCrate.getDefaultState());
         ItemUtil.registerItem(itemChestToCrateUpgrade, "chest_to_crate_upgrade", true);
 
-        itemSmallToMediumCrateUpgrade = new ItemChestToCrateUpgrade("small_to_medium_crate_upgrade", TileEntityGiantChest.class, ModBlocks.blockGiantChestMedium.getDefaultState());
+        itemSmallToMediumCrateUpgrade = new ItemChestToCrateUpgrade("small_to_medium_crate_upgrade", TileEntityCrate.class, ModBlocks.blockCrateMedium.getDefaultState());
         ItemUtil.registerItem(itemSmallToMediumCrateUpgrade, "small_to_medium_crate_upgrade", true);
 
-        itemMediumToLargeCrateUpgrade = new ItemChestToCrateUpgrade("medium_to_large_crate_upgrade", TileEntityGiantChestMedium.class, ModBlocks.blockGiantChestLarge.getDefaultState());
+        itemMediumToLargeCrateUpgrade = new ItemChestToCrateUpgrade("medium_to_large_crate_upgrade", TileEntityCrateMedium.class, ModBlocks.blockCrateLarge.getDefaultState());
         ItemUtil.registerItem(itemMediumToLargeCrateUpgrade, "medium_to_large_crate_upgrade", true);
 
         itemShulkerUpgrade = new ItemCrateUpgrade(ItemCrateUpgrade.UpgradeType.SHULKER);

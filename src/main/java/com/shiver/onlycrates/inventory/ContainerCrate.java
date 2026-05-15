@@ -2,7 +2,7 @@ package com.shiver.onlycrates.inventory;
 
 import com.shiver.onlycrates.inventory.slot.SlotItemHandlerUnconditioned;
 import com.shiver.onlycrates.tile.TileEntityBase;
-import com.shiver.onlycrates.tile.TileEntityGiantChest;
+import com.shiver.onlycrates.tile.TileEntityCrate;
 import com.shiver.onlycrates.util.StackUtil;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,12 +11,12 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-public class ContainerGiantChest extends Container {
+public class ContainerCrate extends Container {
 
-    public final TileEntityGiantChest tileChest;
+    public final TileEntityCrate tileChest;
 
-    public ContainerGiantChest(InventoryPlayer inventory, TileEntityBase tile, int page) {
-        this.tileChest = (TileEntityGiantChest) tile;
+    public ContainerCrate(InventoryPlayer inventory, TileEntityBase tile, int page) {
+        this.tileChest = (TileEntityCrate) tile;
 
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 13; j++) {

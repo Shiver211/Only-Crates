@@ -2,7 +2,7 @@ package com.shiver.onlycrates.tile;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-public class TileEntityGiantChestConfigurable extends TileEntityGiantChest {
+public class TileEntityCrateConfigurable extends TileEntityCrate {
 
     private static final int SLOTS_PER_PAGE = 9 * 13;
     private static final String TAG_PAGE_COUNT = "PageCount";
@@ -10,12 +10,12 @@ public class TileEntityGiantChestConfigurable extends TileEntityGiantChest {
 
     private int pageCount = 1;
 
-    public TileEntityGiantChestConfigurable() {
+    public TileEntityCrateConfigurable() {
         this(1, null);
     }
 
-    public TileEntityGiantChestConfigurable(int pageCount, String displayName) {
-        super(getSlotCount(pageCount), "giantChestConfigurable", displayName);
+    public TileEntityCrateConfigurable(int pageCount, String displayName) {
+        super(getSlotCount(pageCount), "CrateConfigurable", displayName);
         this.pageCount = clampPages(pageCount);
     }
 

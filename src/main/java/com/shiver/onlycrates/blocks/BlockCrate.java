@@ -8,10 +8,10 @@ import javax.annotation.Nullable;
 import com.shiver.onlycrates.OnlyCrates;
 import com.shiver.onlycrates.inventory.GuiHandler;
 import com.shiver.onlycrates.tile.TileEntityBase;
-import com.shiver.onlycrates.tile.TileEntityGiantChest;
-import com.shiver.onlycrates.tile.TileEntityGiantChestConfigurable;
-import com.shiver.onlycrates.tile.TileEntityGiantChestLarge;
-import com.shiver.onlycrates.tile.TileEntityGiantChestMedium;
+import com.shiver.onlycrates.tile.TileEntityCrate;
+import com.shiver.onlycrates.tile.TileEntityCrateConfigurable;
+import com.shiver.onlycrates.tile.TileEntityCrateLarge;
+import com.shiver.onlycrates.tile.TileEntityCrateMedium;
 import com.shiver.onlycrates.tile.TileEntityInventoryBase;
 
 import net.minecraft.block.SoundType;
@@ -39,22 +39,22 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-public class BlockGiantChest extends BlockContainerBase {
+public class BlockCrate extends BlockContainerBase {
 
     public final int type;
     private final int configPages;
     private final String customDisplayName;
     private final String blockId;
 
-    public BlockGiantChest(String name, int type) {
+    public BlockCrate(String name, int type) {
         this(name, type, 0, null, null);
     }
 
-    public BlockGiantChest(String name, int pages, String customDisplayName, String blockId) {
+    public BlockCrate(String name, int pages, String customDisplayName, String blockId) {
         this(name, -1, pages, customDisplayName, blockId);
     }
 
-    private BlockGiantChest(String name, int type, int pages, String customDisplayName, String blockId) {
+    private BlockCrate(String name, int type, int pages, String customDisplayName, String blockId) {
         super(Material.WOOD, name);
         this.type = type;
         this.configPages = pages;
@@ -69,15 +69,15 @@ public class BlockGiantChest extends BlockContainerBase {
     @Override
     public TileEntity createNewTileEntity(World world, int par2) {
         if (this.configPages > 0) {
-            return new TileEntityGiantChestConfigurable(this.configPages, this.customDisplayName);
+            return new TileEntityCrateConfigurable(this.configPages, this.customDisplayName);
         }
         switch (this.type) {
             case 1:
-                return new TileEntityGiantChestMedium();
+                return new TileEntityCrateMedium();
             case 2:
-                return new TileEntityGiantChestLarge();
+                return new TileEntityCrateLarge();
             default:
-                return new TileEntityGiantChest();
+                return new TileEntityCrate();
         }
     }
 
@@ -94,10 +94,10 @@ public class BlockGiantChest extends BlockContainerBase {
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing par6, float par7, float par8, float par9) {
         if (!world.isRemote) {
-            TileEntityGiantChest chest = (TileEntityGiantChest) world.getTileEntity(pos);
+            TileEntityCrate chest = (TileEntityCrate) world.getTileEntity(pos);
             if (chest != null) {
                 chest.fillWithLoot(player);
-                player.openGui(OnlyCrates.INSTANCE, GuiHandler.GUI_GIANT_CHEST_BASE, world, pos.getX(), pos.getY(), pos.getZ());
+                player.openGui(OnlyCrates.INSTANCE, GuiHandler.GUI_CRATE_BASE, world, pos.getX(), pos.getY(), pos.getZ());
             }
             return true;
         }
@@ -114,9 +114,9 @@ public class BlockGiantChest extends BlockContainerBase {
         super.onBlockPlacedBy(world, pos, state, entity, stack);
         if (stack.getTagCompound() != null) {
             TileEntity tile = world.getTileEntity(pos);
-            if (tile instanceof TileEntityGiantChest) {
+            if (tile instanceof TileEntityCrate) {
                 NBTTagList list = stack.getTagCompound().getTagList("Items", 10);
-                IItemHandlerModifiable inv = ((TileEntityGiantChest) tile).inv;
+                IItemHandlerModifiable inv = ((TileEntityCrate) tile).inv;
                 for (int i = 0; i < list.tagCount() && i < inv.getSlots(); i++) {
                     NBTTagCompound compound = list.getCompoundTagAt(i);
                     if (compound != null && compound.hasKey("id")) {
@@ -130,7 +130,7 @@ public class BlockGiantChest extends BlockContainerBase {
     @Override
     public float getExplosionResistance(World world, BlockPos pos, @Nullable Entity exploder, Explosion explosion) {
         TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileEntityGiantChest && ((TileEntityGiantChest) tile).hasBlastProofUpgrade()) {
+        if (tile instanceof TileEntityCrate && ((TileEntityCrate) tile).hasBlastProofUpgrade()) {
             return 6000000.0F;
         }
         return super.getExplosionResistance(world, pos, exploder, explosion);
@@ -139,7 +139,7 @@ public class BlockGiantChest extends BlockContainerBase {
     @Override
     public void onBlockExploded(World world, BlockPos pos, Explosion explosion) {
         TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileEntityGiantChest && ((TileEntityGiantChest) tile).hasBlastProofUpgrade()) {
+        if (tile instanceof TileEntityCrate && ((TileEntityCrate) tile).hasBlastProofUpgrade()) {
             return;
         }
         super.onBlockExploded(world, pos, explosion);
@@ -148,8 +148,8 @@ public class BlockGiantChest extends BlockContainerBase {
     @Override
     public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
         TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileEntityGiantChest && ((TileEntityGiantChest) tile).hasShulkerUpgrade()) {
-            TileEntityGiantChest chest = (TileEntityGiantChest) tile;
+        if (tile instanceof TileEntityCrate && ((TileEntityCrate) tile).hasShulkerUpgrade()) {
+            TileEntityCrate chest = (TileEntityCrate) tile;
             NBTTagCompound data = new NBTTagCompound();
             chest.writeSyncableNBT(data, TileEntityBase.NBTType.SAVE_BLOCK);
 
@@ -184,8 +184,8 @@ public class BlockGiantChest extends BlockContainerBase {
     @Override
     public boolean shouldDropInventory(World world, BlockPos pos) {
         TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileEntityGiantChest) {
-            return !((TileEntityGiantChest) tile).hasShulkerUpgrade();
+        if (tile instanceof TileEntityCrate) {
+            return !((TileEntityCrate) tile).hasShulkerUpgrade();
         }
         return true;
     }
@@ -212,18 +212,18 @@ public class BlockGiantChest extends BlockContainerBase {
 
         @Override
         public void addInformation(ItemStack stack, World playerIn, List<String> tooltip, ITooltipFlag advanced) {
-            int type = this.block instanceof BlockGiantChest ? ((BlockGiantChest) this.block).type : -1;
+            int type = this.block instanceof BlockCrate ? ((BlockCrate) this.block).type : -1;
             if (type == 2) {
-                tooltip.add(TextFormatting.ITALIC + I18n.format("container." + OnlyCrates.MODID + ".giantChestLarge.desc"));
+                tooltip.add(TextFormatting.ITALIC + I18n.format("container." + OnlyCrates.MODID + ".CrateLarge.desc"));
             } else if (type == 0) {
-                tooltip.add(TextFormatting.ITALIC + I18n.format("container." + OnlyCrates.MODID + ".giantChest.desc"));
+                tooltip.add(TextFormatting.ITALIC + I18n.format("container." + OnlyCrates.MODID + ".Crate.desc"));
             }
         }
 
         @Override
         public String getItemStackDisplayName(ItemStack stack) {
-            if (this.block instanceof BlockGiantChest) {
-                String displayName = ((BlockGiantChest) this.block).getCustomDisplayName();
+            if (this.block instanceof BlockCrate) {
+                String displayName = ((BlockCrate) this.block).getCustomDisplayName();
                 if (displayName != null && !displayName.isEmpty()) {
                     return displayName;
                 }

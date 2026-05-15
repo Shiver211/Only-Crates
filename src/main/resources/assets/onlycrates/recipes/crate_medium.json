@@ -7,17 +7,18 @@
   ],
   "key": {
     "C": {
-      "item": "minecraft:diamond"
+      "type": "forge:ore_dict",
+      "ore": "ingotGold"
     },
     "W": {
       "type": "forge:ore_dict",
       "ore": "plankWood"
     },
     "D": {
-      "item": "onlycrates:giant_chest_medium"
+      "item": "onlycrates:crate"
     }
   },
   "result": {
-    "item": "onlycrates:giant_chest_large"
+    "item": "onlycrates:crate_medium"
   }
 }

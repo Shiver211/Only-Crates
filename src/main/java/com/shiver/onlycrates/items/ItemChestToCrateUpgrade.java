@@ -1,6 +1,6 @@
 package com.shiver.onlycrates.items;
 
-import com.shiver.onlycrates.tile.TileEntityGiantChest;
+import com.shiver.onlycrates.tile.TileEntityCrate;
 import com.shiver.onlycrates.tile.TileEntityInventoryBase;
 import com.shiver.onlycrates.util.StackUtil;
 
@@ -38,7 +38,7 @@ public class ItemChestToCrateUpgrade extends Item {
             TileEntity tileHit = world.getTileEntity(pos);
             if (this.start.isInstance(tileHit)) {
                 if (!world.isRemote) {
-                    TileEntityGiantChest oldCrate = tileHit instanceof TileEntityGiantChest ? (TileEntityGiantChest) tileHit : null;
+                    TileEntityCrate oldCrate = tileHit instanceof TileEntityCrate ? (TileEntityCrate) tileHit : null;
                     IItemHandlerModifiable chest = null;
                     if (tileHit instanceof IInventory) {
                         chest = new InvWrapper((IInventory) tileHit);
@@ -69,8 +69,8 @@ public class ItemChestToCrateUpgrade extends Item {
                                 }
                             }
                         }
-                        if (oldCrate != null && newTileHit instanceof TileEntityGiantChest) {
-                            TileEntityGiantChest newCrate = (TileEntityGiantChest) newTileHit;
+                        if (oldCrate != null && newTileHit instanceof TileEntityCrate) {
+                            TileEntityCrate newCrate = (TileEntityCrate) newTileHit;
                             boolean upgraded = false;
                             if (oldCrate.hasShulkerUpgrade()) {
                                 upgraded |= newCrate.applyShulkerUpgrade();

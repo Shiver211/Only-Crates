@@ -31,9 +31,9 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public static void onModelRegistry(ModelRegistryEvent event) {
-        registerItemModel(Item.getItemFromBlock(ModBlocks.blockGiantChest));
-        registerItemModel(Item.getItemFromBlock(ModBlocks.blockGiantChestMedium));
-        registerItemModel(Item.getItemFromBlock(ModBlocks.blockGiantChestLarge));
+        registerItemModel(Item.getItemFromBlock(ModBlocks.blockCrate));
+        registerItemModel(Item.getItemFromBlock(ModBlocks.blockCrateMedium));
+        registerItemModel(Item.getItemFromBlock(ModBlocks.blockCrateLarge));
         for (Block block : ModBlocks.getExtraCrates()) {
             registerExtraCrateModel(block);
         }

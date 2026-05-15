@@ -31,10 +31,10 @@ public abstract class TileEntityBase extends TileEntity implements ITickable {
 
     public static void init() {
         OnlyCrates.LOGGER.info("Registering TileEntities...");
-        register(TileEntityGiantChest.class);
-        register(TileEntityGiantChestMedium.class);
-        register(TileEntityGiantChestLarge.class);
-        register(TileEntityGiantChestConfigurable.class);
+        register(TileEntityCrate.class);
+        register(TileEntityCrateMedium.class);
+        register(TileEntityCrateLarge.class);
+        register(TileEntityCrateConfigurable.class);
     }
 
     private static void register(Class<? extends TileEntityBase> tileClass) {

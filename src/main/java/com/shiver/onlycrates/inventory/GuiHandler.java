@@ -1,8 +1,8 @@
 package com.shiver.onlycrates.inventory;
 
-import com.shiver.onlycrates.inventory.gui.GuiGiantChest;
+import com.shiver.onlycrates.inventory.gui.GuiCrate;
 import com.shiver.onlycrates.tile.TileEntityBase;
-import com.shiver.onlycrates.tile.TileEntityGiantChest;
+import com.shiver.onlycrates.tile.TileEntityCrate;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -15,7 +15,7 @@ import com.shiver.onlycrates.OnlyCrates;
 
 public class GuiHandler implements IGuiHandler {
 
-    public static final int GUI_GIANT_CHEST_BASE = 0;
+    public static final int GUI_CRATE_BASE = 0;
 
     public static void init() {
         NetworkRegistry.INSTANCE.registerGuiHandler(OnlyCrates.INSTANCE, new GuiHandler());
@@ -24,11 +24,11 @@ public class GuiHandler implements IGuiHandler {
     @Override
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
         TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
-        if (tile instanceof TileEntityGiantChest) {
-            int page = id - GUI_GIANT_CHEST_BASE;
-            int pageCount = ((TileEntityGiantChest) tile).getPageCount();
+        if (tile instanceof TileEntityCrate) {
+            int page = id - GUI_CRATE_BASE;
+            int pageCount = ((TileEntityCrate) tile).getPageCount();
             if (page >= 0 && page < pageCount) {
-                return new ContainerGiantChest(player.inventory, (TileEntityBase) tile, page);
+                return new ContainerCrate(player.inventory, (TileEntityBase) tile, page);
             }
         }
         return null;
@@ -37,11 +37,11 @@ public class GuiHandler implements IGuiHandler {
     @Override
     public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
         TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
-        if (tile instanceof TileEntityGiantChest) {
-            int page = id - GUI_GIANT_CHEST_BASE;
-            int pageCount = ((TileEntityGiantChest) tile).getPageCount();
+        if (tile instanceof TileEntityCrate) {
+            int page = id - GUI_CRATE_BASE;
+            int pageCount = ((TileEntityCrate) tile).getPageCount();
             if (page >= 0 && page < pageCount) {
-                return new GuiGiantChest(player.inventory, (TileEntityBase) tile, page);
+                return new GuiCrate(player.inventory, (TileEntityBase) tile, page);
             }
         }
         return null;

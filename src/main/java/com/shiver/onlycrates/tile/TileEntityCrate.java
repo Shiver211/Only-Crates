@@ -15,7 +15,7 @@ import net.minecraft.world.storage.loot.ILootContainer;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootTable;
 
-public class TileEntityGiantChest extends TileEntityInventoryBase implements IButtonReactor, ILootContainer {
+public class TileEntityCrate extends TileEntityInventoryBase implements IButtonReactor, ILootContainer {
 
     private static final int SLOTS_PER_PAGE = 9 * 13;
     private static final String TAG_SHULKER_UPGRADE = "ShulkerUpgrade";
@@ -26,17 +26,17 @@ public class TileEntityGiantChest extends TileEntityInventoryBase implements IBu
     private boolean shulkerUpgrade;
     private boolean blastProofUpgrade;
 
-    public TileEntityGiantChest(int slotAmount, String name) {
+    public TileEntityCrate(int slotAmount, String name) {
         this(slotAmount, name, null);
     }
 
-    public TileEntityGiantChest(int slotAmount, String name, String customDisplayName) {
+    public TileEntityCrate(int slotAmount, String name, String customDisplayName) {
         super(slotAmount, name);
         this.customDisplayName = customDisplayName;
     }
 
-    public TileEntityGiantChest() {
-        this(9 * 13, "giantChest");
+    public TileEntityCrate() {
+        this(9 * 13, "Crate");
     }
 
     public int getPageCount() {
@@ -115,7 +115,7 @@ public class TileEntityGiantChest extends TileEntityInventoryBase implements IBu
         if (player != null && this.pos != null) {
             int pageCount = this.getPageCount();
             if (buttonID >= 0 && buttonID < pageCount) {
-                player.openGui(OnlyCrates.INSTANCE, GuiHandler.GUI_GIANT_CHEST_BASE + buttonID, this.world, this.pos.getX(), this.pos.getY(), this.pos.getZ());
+                player.openGui(OnlyCrates.INSTANCE, GuiHandler.GUI_CRATE_BASE + buttonID, this.world, this.pos.getX(), this.pos.getY(), this.pos.getZ());
             }
         }
     }
