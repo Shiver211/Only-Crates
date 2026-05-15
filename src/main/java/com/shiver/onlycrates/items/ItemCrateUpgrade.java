@@ -43,7 +43,7 @@ public class ItemCrateUpgrade extends Item {
 
     public ItemCrateUpgrade(UpgradeType type) {
         this.type = type;
-        this.setMaxStackSize(1);
+        this.setMaxStackSize(64);
     }
 
     @Override

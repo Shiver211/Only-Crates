@@ -41,11 +41,11 @@ public final class ModConfig {
                     KEY_EXTRA_CRATES,
                     CATEGORY_CRATES,
                     new String[0],
-                    "Extra crate levels. Format: block_id/display_name/pages\n" +
+                    "Extra crate levels. Format: block_id/display_name/pages Example: example_crate/Example Carte/4\n" +
                     "block_id: unique identifier for the crate\n" +
                     "display_name: name shown in game\n" +
                     "pages: number of GUI pages (1 page = 117 slots)\n" +
-                    "Place 'block_id.png' (16x16) in the 'textures' folder to use  custom textures"
+                    "Place 'block_id.png' (16x16) in the 'textures' folder to use custom textures\n"
             );
             extraCrates = parseEntries(entries);
         } finally {

@@ -28,7 +28,7 @@ public class ItemChestToCrateUpgrade extends Item {
     public ItemChestToCrateUpgrade(String name, Class<? extends TileEntity> start, IBlockState end) {
         this.start = start;
         this.end = end;
-        this.setMaxStackSize(1);
+        this.setMaxStackSize(64);
     }
 
     @Override
