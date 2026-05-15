@@ -1,22 +1,22 @@
 package com.shiver.onlycrates.config;
 
+import com.shiver.onlycrates.OnlyCrates;
+import net.minecraftforge.common.config.Configuration;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
-import com.shiver.onlycrates.OnlyCrates;
-
-import net.minecraftforge.common.config.Configuration;
+import javax.annotation.Nullable;
 
 public final class ModConfig {
 
     private static final String CATEGORY_CRATES = "crates";
-    private static final String KEY_EXTRA_CRATES = "extra_crates";
+    private static final String KEY_EXTRA_COUNT = "extra_crate_count";
+    private static final String KEY_EXTRA_PAGES = "extra_crate_pages";
 
     private static List<CrateLevel> extraCrates = new ArrayList<>();
+    private static long cleanupGracePeriodMs = 30 * 60 * 1000L;
 
     private ModConfig() {}
 
@@ -31,16 +31,31 @@ public final class ModConfig {
         Configuration config = new Configuration(configFile);
         try {
             config.load();
-            String[] entries = config.getStringList(
-                    KEY_EXTRA_CRATES,
+
+            int count = config.getInt(
+                    KEY_EXTRA_COUNT,
                     CATEGORY_CRATES,
-                    new String[0],
-                    "Extra crate levels. Format: block_id/display_name/pages\n" +
-                    "block_id: unique identifier for the crate\n" +
-                    "display_name: name shown in game\n" +
-                    "pages: number of GUI pages (1 page = 117 slots)"
+                    0,
+                    0,
+                    13,
+                    "Number of additional crate blocks to register (beyond the 3 default). Max 13 (meta 3-15)."
             );
-            extraCrates = parseEntries(entries);
+
+            int[] pages = config.get(
+                    KEY_EXTRA_PAGES,
+                    CATEGORY_CRATES,
+                    new int[0],
+                    "Pages for each extra crate. Must have exactly 'extra_crate_count' entries. 1 page = 117 slots."
+            ).getIntList();
+
+            extraCrates = buildExtraCrates(count, pages);
+
+            cleanupGracePeriodMs = config.getInt(
+                    "cleanup_grace_period_minutes",
+                    CATEGORY_CRATES,
+                    30, 1, 1440,
+                    "Minutes to wait before deleting orphaned crate data (UUID with no active block). Set high for safety."
+            ) * 60L * 1000L;
         } finally {
             if (config.hasChanged()) {
                 config.save();
@@ -52,80 +67,69 @@ public final class ModConfig {
         return Collections.unmodifiableList(extraCrates);
     }
 
-    private static List<CrateLevel> parseEntries(String[] entries) {
+    public static long getCleanupGracePeriodMs() {
+        return cleanupGracePeriodMs;
+    }
+
+    private static List<CrateLevel> buildExtraCrates(int count, int[] pages) {
         List<CrateLevel> levels = new ArrayList<>();
-        Set<String> usedIds = new HashSet<>();
+        if (count != pages.length) {
+            OnlyCrates.LOGGER.error(
+                    "extra_crate_count ({}) does not match extra_crate_pages length ({})",
+                    count, pages.length
+            );
+            return levels;
+        }
 
-        for (String entry : entries) {
-            if (entry == null) continue;
-            String trimmed = entry.trim();
-            if (trimmed.isEmpty()) continue;
-
-            String[] parts = trimmed.split("/", 3);
-            if (parts.length != 3) {
-                OnlyCrates.LOGGER.warn("Invalid extra_crates entry (expected 3 parts): {}", entry);
+        for (int i = 0; i < count; i++) {
+            if (pages[i] < 1) {
+                OnlyCrates.LOGGER.warn(
+                        "Invalid pages value at index {}: {}, must be >= 1. Skipping.",
+                        i, pages[i]
+                );
                 continue;
             }
 
-            String rawId = parts[0].trim();
-            String displayName = parts[1].trim();
-            String pageText = parts[2].trim();
-
-            if (rawId.isEmpty()) {
-                OnlyCrates.LOGGER.warn("Invalid extra_crates entry (empty block_id): {}", entry);
-                continue;
-            }
-            if (displayName.isEmpty()) {
-                OnlyCrates.LOGGER.warn("Invalid extra_crates entry (empty display_name): {}", entry);
-                continue;
-            }
-
-            int pages;
-            try {
-                pages = Integer.parseInt(pageText);
-            } catch (NumberFormatException ex) {
-                OnlyCrates.LOGGER.warn("Invalid extra_crates entry (bad pages): {}", entry);
-                continue;
-            }
-            if (pages < 1) {
-                OnlyCrates.LOGGER.warn("Invalid extra_crates entry (pages < 1): {}", entry);
-                continue;
-            }
-
-            String blockId = rawId.contains(":") ? rawId : OnlyCrates.MODID + ":" + rawId;
-
-            if (usedIds.contains(blockId)) {
-                OnlyCrates.LOGGER.warn("Duplicate extra_crates block_id, skipping: {}", blockId);
-                continue;
-            }
-            usedIds.add(blockId);
-
-            levels.add(new CrateLevel(blockId, displayName, pages));
+            int meta = 3 + i;
+            levels.add(new CrateLevel(meta, pages[i]));
         }
         return levels;
     }
 
+    @Nullable
+    public static CrateLevel getCrateLevel(int meta) {
+        if (meta == 0) {
+            return new CrateLevel(0, 1);
+        }
+        if (meta == 1) {
+            return new CrateLevel(1, 2);
+        }
+        if (meta == 2) {
+            return new CrateLevel(2, 3);
+        }
+        for (CrateLevel level : extraCrates) {
+            if (level.getMeta() == meta) {
+                return level;
+            }
+        }
+        return null;
+    }
+
     public static final class CrateLevel {
-        private final String blockId;
-        private final String displayName;
+        private final int meta;
         private final int pages;
 
-        public CrateLevel(String blockId, String displayName, int pages) {
-            this.blockId = blockId;
-            this.displayName = displayName;
+        public CrateLevel(int meta, int pages) {
+            this.meta = meta;
             this.pages = pages;
         }
 
-        public String getBlockId() {
-            return this.blockId;
-        }
-
-        public String getDisplayName() {
-            return this.displayName;
+        public int getMeta() {
+            return meta;
         }
 
         public int getPages() {
-            return this.pages;
+            return pages;
         }
     }
 }

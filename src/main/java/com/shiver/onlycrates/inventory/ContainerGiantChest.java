@@ -1,8 +1,10 @@
 package com.shiver.onlycrates.inventory;
 
+import java.util.UUID;
+
 import com.shiver.onlycrates.inventory.slot.SlotItemHandlerUnconditioned;
-import com.shiver.onlycrates.tile.TileEntityBase;
-import com.shiver.onlycrates.tile.TileEntityGiantChest;
+import com.shiver.onlycrates.storage.ChestDataStore;
+import com.shiver.onlycrates.util.ItemStackHandlerAA;
 import com.shiver.onlycrates.util.StackUtil;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,14 +15,14 @@ import net.minecraft.item.ItemStack;
 
 public class ContainerGiantChest extends Container {
 
-    public final TileEntityGiantChest tileChest;
+    private final UUID chestUUID;
 
-    public ContainerGiantChest(InventoryPlayer inventory, TileEntityBase tile, int page) {
-        this.tileChest = (TileEntityGiantChest) tile;
+    public ContainerGiantChest(InventoryPlayer inventory, UUID chestUUID, ItemStackHandlerAA handler, int page) {
+        this.chestUUID = chestUUID;
 
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 13; j++) {
-                this.addSlotToContainer(new SlotItemHandlerUnconditioned(this.tileChest.inv, 9 * 13 * page + j + i * 13, 5 + j * 18, 5 + i * 18));
+                this.addSlotToContainer(new SlotItemHandlerUnconditioned(handler, 9 * 13 * page + j + i * 13, 5 + j * 18, 5 + i * 18));
             }
         }
 
@@ -71,6 +73,6 @@ public class ContainerGiantChest extends Container {
 
     @Override
     public boolean canInteractWith(EntityPlayer player) {
-        return this.tileChest.canPlayerUse(player);
+        return this.chestUUID != null && ChestDataStore.get(player.world).getData(this.chestUUID) != null;
     }
 }

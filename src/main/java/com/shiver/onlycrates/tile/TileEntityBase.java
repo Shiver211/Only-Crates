@@ -1,6 +1,7 @@
 package com.shiver.onlycrates.tile;
 
 import com.shiver.onlycrates.OnlyCrates;
+import com.shiver.onlycrates.Tags;
 import com.shiver.onlycrates.util.VanillaPacketDispatcher;
 
 import net.minecraft.block.state.IBlockState;
@@ -31,18 +32,7 @@ public abstract class TileEntityBase extends TileEntity implements ITickable {
 
     public static void init() {
         OnlyCrates.LOGGER.info("Registering TileEntities...");
-        register(TileEntityGiantChest.class);
-        register(TileEntityGiantChestMedium.class);
-        register(TileEntityGiantChestLarge.class);
-        register(TileEntityGiantChestConfigurable.class);
-    }
-
-    private static void register(Class<? extends TileEntityBase> tileClass) {
-        try {
-            GameRegistry.registerTileEntity(tileClass, new net.minecraft.util.ResourceLocation(OnlyCrates.MODID, tileClass.newInstance().name));
-        } catch (Exception e) {
-            OnlyCrates.LOGGER.fatal("Registering a TileEntity failed!", e);
-        }
+        GameRegistry.registerTileEntity(TileEntityGiantChest.class, new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "giantChest"));
     }
 
     @Override
@@ -81,11 +71,15 @@ public abstract class TileEntityBase extends TileEntity implements ITickable {
     }
 
     public final void sendUpdate() {
-        if (this.world != null && !this.world.isRemote) VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+        if (this.world != null && !this.world.isRemote) {
+            VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+        }
     }
 
     public void writeSyncableNBT(NBTTagCompound compound, NBTType type) {
-        if (type != NBTType.SAVE_BLOCK) super.writeToNBT(compound);
+        if (type != NBTType.SAVE_BLOCK) {
+            super.writeToNBT(compound);
+        }
 
         if (type == NBTType.SAVE_TILE) {
             compound.setInteger("TicksElapsed", this.ticksElapsed);
@@ -93,7 +87,9 @@ public abstract class TileEntityBase extends TileEntity implements ITickable {
     }
 
     public void readSyncableNBT(NBTTagCompound compound, NBTType type) {
-        if (type != NBTType.SAVE_BLOCK) super.readFromNBT(compound);
+        if (type != NBTType.SAVE_BLOCK) {
+            super.readFromNBT(compound);
+        }
 
         if (type == NBTType.SAVE_TILE) {
             this.ticksElapsed = compound.getInteger("TicksElapsed");
@@ -106,7 +102,7 @@ public abstract class TileEntityBase extends TileEntity implements ITickable {
     }
 
     public String getNameForTranslation() {
-        return "container." + OnlyCrates.MODID + "." + this.name + ".name";
+        return "container." + Tags.MOD_ID + "." + this.name + ".name";
     }
 
     @Override

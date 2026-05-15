@@ -1,73 +1,77 @@
 package com.shiver.onlycrates.blocks;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.shiver.onlycrates.OnlyCrates;
+import com.shiver.onlycrates.Tags;
+import com.shiver.onlycrates.config.ModConfig;
 import com.shiver.onlycrates.inventory.GuiHandler;
+import com.shiver.onlycrates.storage.ChestDataStore;
+import com.shiver.onlycrates.tile.TileEntityBase;
 import com.shiver.onlycrates.tile.TileEntityGiantChest;
-import com.shiver.onlycrates.tile.TileEntityGiantChestConfigurable;
-import com.shiver.onlycrates.tile.TileEntityGiantChestLarge;
-import com.shiver.onlycrates.tile.TileEntityGiantChestMedium;
 
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyInteger;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class BlockGiantChest extends BlockContainerBase {
 
-    public final int type;
-    private final int configPages;
-    private final String customDisplayName;
-    private final String blockId;
+    public static final PropertyInteger LEVEL = PropertyInteger.create("level", 0, 15);
 
-    public BlockGiantChest(String name, int type) {
-        this(name, type, 0, null, null);
-    }
-
-    public BlockGiantChest(String name, int pages, String customDisplayName, String blockId) {
-        this(name, -1, pages, customDisplayName, blockId);
-    }
-
-    private BlockGiantChest(String name, int type, int pages, String customDisplayName, String blockId) {
+    public BlockGiantChest(String name) {
         super(Material.WOOD, name);
-        this.type = type;
-        this.configPages = pages;
-        this.customDisplayName = customDisplayName;
-        this.blockId = blockId;
         this.setHarvestLevel("axe", 0);
         this.setHardness(0.5F);
         this.setResistance(15.0F);
         this.setSoundType(SoundType.WOOD);
+        this.setDefaultState(this.blockState.getBaseState().withProperty(LEVEL, 0));
     }
 
     @Override
-    public TileEntity createNewTileEntity(World world, int par2) {
-        if (this.configPages > 0) {
-            return new TileEntityGiantChestConfigurable(this.configPages, this.customDisplayName);
-        }
-        switch (this.type) {
-            case 1:
-                return new TileEntityGiantChestMedium();
-            case 2:
-                return new TileEntityGiantChestLarge();
-            default:
-                return new TileEntityGiantChest();
-        }
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, LEVEL);
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return state.getValue(LEVEL);
+    }
+
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return this.getDefaultState().withProperty(LEVEL, MathHelper.clamp(meta, 0, 15));
+    }
+
+    @Override
+    public int damageDropped(IBlockState state) {
+        return state.getValue(LEVEL);
+    }
+
+    @Override
+    public TileEntity createNewTileEntity(World world, int meta) {
+        ModConfig.CrateLevel level = ModConfig.getCrateLevel(meta);
+        int pages = level != null ? level.getPages() : 1;
+        return new TileEntityGiantChest(pages);
     }
 
     @Override
@@ -99,62 +103,117 @@ public class BlockGiantChest extends BlockContainerBase {
     }
 
     @Override
+    public boolean shouldDropInventory(World world, BlockPos pos) {
+        return false;
+    }
+
+    @Override
+    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+        if (!world.isRemote) {
+            TileEntity te = world.getTileEntity(pos);
+            if (te instanceof TileEntityGiantChest) {
+                TileEntityGiantChest chest = (TileEntityGiantChest) te;
+                UUID uuid = chest.getChestUUID();
+                if (uuid != null && !isPistonMove(world, pos)) {
+                    ChestDataStore.get(world).markForDeletion(uuid);
+                }
+            }
+        }
+        super.breakBlock(world, pos, state);
+    }
+
+    private boolean isPistonMove(World world, BlockPos pos) {
+        for (EnumFacing facing : EnumFacing.values()) {
+            TileEntity te = world.getTileEntity(pos.offset(facing));
+            if (te instanceof net.minecraft.tileentity.TileEntityPiston) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof TileEntityGiantChest) {
+            TileEntityGiantChest chest = (TileEntityGiantChest) te;
+            NBTTagCompound data = new NBTTagCompound();
+            chest.writeSyncableNBT(data, TileEntityBase.NBTType.SAVE_BLOCK);
+
+            ItemStack stack = new ItemStack(this.getItemDropped(state, ((World) world).rand, fortune), 1, this.damageDropped(state));
+            if (!data.isEmpty()) {
+                stack.setTagCompound(new NBTTagCompound());
+                stack.getTagCompound().setTag("Data", data);
+            }
+            drops.add(stack);
+        } else {
+            super.getDrops(drops, world, pos, state, fortune);
+        }
+    }
+
+    @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entity, ItemStack stack) {
-        if (stack.getTagCompound() != null) {
-            TileEntity tile = world.getTileEntity(pos);
-            if (tile instanceof TileEntityGiantChest) {
-                NBTTagList list = stack.getTagCompound().getTagList("Items", 10);
-                IItemHandlerModifiable inv = ((TileEntityGiantChest) tile).inv;
-                for (int i = 0; i < list.tagCount(); i++) {
-                    NBTTagCompound compound = list.getCompoundTagAt(i);
-                    if (compound != null && compound.hasKey("id")) {
-                        inv.setStackInSlot(i, new ItemStack(list.getCompoundTagAt(i)));
-                    }
+        if (stack.hasTagCompound()) {
+            NBTTagCompound data = stack.getTagCompound().getCompoundTag("Data");
+            if (data.hasKey("uuid")) {
+                TileEntity te = world.getTileEntity(pos);
+                if (te instanceof TileEntityGiantChest) {
+                    TileEntityGiantChest chest = (TileEntityGiantChest) te;
+                    chest.setUUID(UUID.fromString(data.getString("uuid")));
+                    chest.ensureDataExists();
                 }
             }
         }
         super.onBlockPlacedBy(world, pos, state, entity, stack);
     }
 
+    @Override
+    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
+        for (int i = 0; i <= 2; i++) {
+            items.add(new ItemStack(this, 1, i));
+        }
+        for (ModConfig.CrateLevel level : ModConfig.getExtraCrates()) {
+            items.add(new ItemStack(this, 1, level.getMeta()));
+        }
+    }
 
     @Override
     protected ItemBlockBase getItemBlock() {
         return new TheItemBlock(this);
     }
 
-    public String getCustomDisplayName() {
-        return this.customDisplayName;
-    }
-
-    public String getBlockId() {
-        return this.blockId;
-    }
-
     public static class TheItemBlock extends ItemBlockBase {
 
         public TheItemBlock(net.minecraft.block.Block block) {
             super(block);
+            this.setHasSubtypes(true);
+        }
+
+        @Override
+        public int getMetadata(int damage) {
+            return damage;
         }
 
         @Override
         public void addInformation(ItemStack stack, World playerIn, List<String> tooltip, ITooltipFlag advanced) {
-            int type = this.block instanceof BlockGiantChest ? ((BlockGiantChest) this.block).type : -1;
-            if (type == 2) {
-                tooltip.add(TextFormatting.ITALIC + I18n.format("container." + OnlyCrates.MODID + ".giantChestLarge.desc"));
-            } else if (type == 0) {
-                tooltip.add(TextFormatting.ITALIC + I18n.format("container." + OnlyCrates.MODID + ".giantChest.desc"));
+            int meta = stack.getMetadata();
+            if (meta == 2) {
+                tooltip.add(TextFormatting.ITALIC + I18n.format("container." + Tags.MOD_ID + ".giantChestLarge.desc"));
+            } else if (meta == 0) {
+                tooltip.add(TextFormatting.ITALIC + I18n.format("container." + Tags.MOD_ID + ".giantChest.desc"));
             }
         }
 
         @Override
         public String getItemStackDisplayName(ItemStack stack) {
-            if (this.block instanceof BlockGiantChest) {
-                String displayName = ((BlockGiantChest) this.block).getCustomDisplayName();
-                if (displayName != null && !displayName.isEmpty()) {
-                    return displayName;
+            if (stack.hasTagCompound()) {
+                NBTTagCompound data = stack.getTagCompound().getCompoundTag("Data");
+                if (data.hasKey("DisplayName")) {
+                    return data.getString("DisplayName");
                 }
             }
-            return super.getItemStackDisplayName(stack);
+            int meta = stack.getMetadata();
+            return I18n.format("tile." + Tags.MOD_ID + ".block_giant_chest_" + meta + ".name");
         }
 
         @Override

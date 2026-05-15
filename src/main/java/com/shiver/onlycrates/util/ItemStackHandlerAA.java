@@ -8,8 +8,6 @@ public class ItemStackHandlerAA extends ItemStackHandler {
 
     public static final IAcceptor ACCEPT_TRUE = (a, b, c) -> true;
     public static final IRemover REMOVE_TRUE = (a, b) -> true;
-    public static final IAcceptor ACCEPT_FALSE = (a, b, c) -> false;
-    public static final IRemover REMOVE_FALSE = (a, b) -> false;
 
     IAcceptor acceptor;
     IRemover remover;
@@ -44,7 +42,9 @@ public class ItemStackHandlerAA extends ItemStackHandler {
     }
 
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate, boolean fromAutomation) {
-        if (!this.canAccept(slot, stack, fromAutomation)) return stack;
+        if (!this.canAccept(slot, stack, fromAutomation)) {
+            return stack;
+        }
         return super.insertItem(slot, stack, simulate);
     }
 
@@ -54,7 +54,9 @@ public class ItemStackHandlerAA extends ItemStackHandler {
     }
 
     public ItemStack extractItem(int slot, int amount, boolean simulate, boolean byAutomation) {
-        if (!this.canRemove(slot, byAutomation)) return ItemStack.EMPTY;
+        if (!this.canRemove(slot, byAutomation)) {
+            return ItemStack.EMPTY;
+        }
         return super.extractItem(slot, amount, simulate);
     }
 

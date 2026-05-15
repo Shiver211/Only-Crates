@@ -1,5 +1,11 @@
 package com.shiver.onlycrates.items;
 
+import java.util.UUID;
+
+import com.shiver.onlycrates.config.ModConfig;
+import com.shiver.onlycrates.storage.ChestData;
+import com.shiver.onlycrates.storage.ChestDataStore;
+import com.shiver.onlycrates.tile.TileEntityGiantChest;
 import com.shiver.onlycrates.tile.TileEntityInventoryBase;
 import com.shiver.onlycrates.util.StackUtil;
 
@@ -19,13 +25,20 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
+import javax.annotation.Nullable;
+
 public class ItemChestToCrateUpgrade extends Item {
 
+    public static final ThreadLocal<UUID> pendingUpgradeUUID = new ThreadLocal<>();
+
     private final Class<? extends TileEntity> start;
+    @Nullable
+    private final IBlockState startState;
     private final IBlockState end;
 
-    public ItemChestToCrateUpgrade(String name, Class<? extends TileEntity> start, IBlockState end) {
+    public ItemChestToCrateUpgrade(String name, Class<? extends TileEntity> start, @Nullable IBlockState startState, IBlockState end) {
         this.start = start;
+        this.startState = startState;
         this.end = end;
         this.setMaxStackSize(1);
     }
@@ -35,34 +48,72 @@ public class ItemChestToCrateUpgrade extends Item {
         ItemStack heldStack = player.getHeldItem(hand);
         if (player.isSneaking()) {
             TileEntity tileHit = world.getTileEntity(pos);
-            if (tileHit != null && this.start.isInstance(tileHit)) {
+            boolean matches;
+            if (this.startState != null) {
+                IBlockState currentState = world.getBlockState(pos);
+                matches = currentState.equals(this.startState);
+            } else {
+                matches = this.start.isInstance(tileHit);
+            }
+            if (tileHit != null && matches) {
                 if (!world.isRemote) {
-                    IItemHandlerModifiable chest = null;
+                    IItemHandlerModifiable sourceInventory = null;
                     if (tileHit instanceof IInventory) {
-                        chest = new InvWrapper((IInventory) tileHit);
+                        sourceInventory = new InvWrapper((IInventory) tileHit);
                     } else if (tileHit instanceof TileEntityInventoryBase) {
-                        chest = ((TileEntityInventoryBase) tileHit).inv;
+                        sourceInventory = ((TileEntityInventoryBase) tileHit).inv;
                     }
 
-                    if (chest != null) {
-                        ItemStack[] stacks = new ItemStack[chest.getSlots()];
-                        for (int i = 0; i < stacks.length; i++) {
-                            ItemStack aStack = chest.getStackInSlot(i);
-                            stacks[i] = aStack.copy();
+                    UUID preservedUUID = null;
+                    if (tileHit instanceof TileEntityGiantChest) {
+                        preservedUUID = ((TileEntityGiantChest) tileHit).getChestUUID();
+                    }
+
+                    ItemStack[] copiedItems = null;
+                    if (sourceInventory != null) {
+                        copiedItems = new ItemStack[sourceInventory.getSlots()];
+                        for (int i = 0; i < copiedItems.length; i++) {
+                            ItemStack aStack = sourceInventory.getStackInSlot(i);
+                            copiedItems[i] = StackUtil.isValid(aStack) ? aStack.copy() : ItemStack.EMPTY;
                         }
+                    }
 
-                        world.playEvent(2001, pos, Block.getStateId(world.getBlockState(pos)));
-                        world.removeTileEntity(pos);
-                        world.setBlockState(pos, this.end, 2);
-                        if (!player.capabilities.isCreativeMode) heldStack.shrink(1);
+                    if (preservedUUID != null) {
+                        ChestData data = ChestDataStore.get(world).getData(preservedUUID);
+                        if (data != null) {
+                            int newMeta = this.end.getBlock().getMetaFromState(this.end);
+                            ModConfig.CrateLevel newLevel = ModConfig.getCrateLevel(newMeta);
+                            if (newLevel != null) {
+                                data.expandPages(newLevel.getPages());
+                            }
+                        }
+                    }
 
-                        TileEntity newTileHit = world.getTileEntity(pos);
-                        if (newTileHit instanceof TileEntityInventoryBase) {
-                            IItemHandlerModifiable newChest = ((TileEntityInventoryBase) newTileHit).inv;
-                            for (int i = 0; i < stacks.length; i++) {
-                                if (StackUtil.isValid(stacks[i])) {
-                                    if (newChest.getSlots() > i) {
-                                        newChest.setStackInSlot(i, stacks[i].copy());
+                    pendingUpgradeUUID.set(preservedUUID);
+
+                    world.playEvent(2001, pos, Block.getStateId(world.getBlockState(pos)));
+                    world.removeTileEntity(pos);
+                    world.setBlockState(pos, this.end, 2);
+
+                    pendingUpgradeUUID.remove();
+
+                    if (!player.capabilities.isCreativeMode) {
+                        heldStack.shrink(1);
+                    }
+
+                    if (preservedUUID == null && copiedItems != null) {
+                        TileEntity newTile = world.getTileEntity(pos);
+                        if (newTile instanceof TileEntityGiantChest) {
+                            TileEntityGiantChest newChest = (TileEntityGiantChest) newTile;
+                            UUID newUUID = newChest.getChestUUID();
+                            if (newUUID != null) {
+                                ChestData data = ChestDataStore.get(world).getData(newUUID);
+                                if (data != null) {
+                                    IItemHandlerModifiable targetInv = data.getInventory();
+                                    for (int i = 0; i < copiedItems.length && i < targetInv.getSlots(); i++) {
+                                        if (StackUtil.isValid(copiedItems[i])) {
+                                            targetInv.setStackInSlot(i, copiedItems[i]);
+                                        }
                                     }
                                 }
                             }

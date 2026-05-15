@@ -17,13 +17,14 @@ import org.apache.logging.log4j.Logger;
 @Mod(modid = Tags.MOD_ID, name = Tags.MOD_NAME, version = Tags.VERSION)
 public class OnlyCrates {
 
-    public static final String MODID = Tags.MOD_ID;
-    public static final Logger LOGGER = LogManager.getLogger(Tags.MOD_NAME);
+    public static final Logger LOGGER = LogManager.getLogger(Tags.MOD_ID);
 
-    @Mod.Instance(MODID)
+    @Mod.Instance(Tags.MOD_ID)
     public static OnlyCrates INSTANCE;
 
-    @SidedProxy(clientSide = "com.shiver.onlycrates.proxy.ClientProxy", serverSide = "com.shiver.onlycrates.proxy.CommonProxy")
+    @SidedProxy(clientSide = "com.shiver.onlycrates.proxy.ClientProxy",
+                serverSide = "com.shiver.onlycrates.proxy.CommonProxy")
+
     public static CommonProxy PROXY;
 
     @Mod.EventHandler
