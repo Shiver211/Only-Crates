@@ -2,7 +2,7 @@ package com.shiver.onlycrates.inventory.gui;
 
 import java.io.IOException;
 
-import com.shiver.onlycrates.OnlyCrates;
+import com.shiver.onlycrates.Tags;
 import com.shiver.onlycrates.inventory.ContainerGiantChest;
 import com.shiver.onlycrates.network.NetworkHandler;
 import com.shiver.onlycrates.tile.TileEntityBase;
@@ -18,8 +18,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class GuiGiantChest extends GuiBase {
 
-    private static final ResourceLocation RES_LOC = new ResourceLocation(OnlyCrates.MODID, "textures/gui/gui_giant_chest.png");
-    private static final ResourceLocation INVENTORY_LOC = new ResourceLocation(OnlyCrates.MODID, "textures/gui/gui_inventory.png");
+    private static final ResourceLocation RES_LOC = new ResourceLocation(Tags.MOD_ID, "textures/gui/gui_giant_chest.png");
+    private static final ResourceLocation INVENTORY_LOC = new ResourceLocation(Tags.MOD_ID, "textures/gui/gui_inventory.png");
 
     private final TileEntityGiantChest chest;
     private final int page;

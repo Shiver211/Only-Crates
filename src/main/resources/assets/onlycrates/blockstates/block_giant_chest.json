@@ -1,14 +1,75 @@
 {
   "forge_marker": 1,
-  "defaults": {
-    "model": "onlycrates:block_giant_chest",
-    "textures": {
-      "particle": "onlycrates:blocks/block_giant_chest"
-    },
-    "transform": "forge:default-block"
-  },
   "variants": {
-    "normal": [{}],
-    "inventory": [{}]
+    "level=0": {
+      "model": "onlycrates:block_giant_chest_base",
+      "textures": {
+        "side": "onlycrates:blocks/block_giant_chest_0"
+      }
+    },
+    "level=1": {
+      "model": "onlycrates:block_giant_chest_base_detail",
+      "textures": {
+        "side": "onlycrates:blocks/block_giant_chest_1"
+      }
+    },
+    "level=2": {
+      "model": "onlycrates:block_giant_chest_base_detail",
+      "textures": {
+        "side": "onlycrates:blocks/block_giant_chest_2"
+      }
+    },
+    "level=3": {
+      "model": "onlycrates:block_giant_chest_base_detail",
+      "textures": { "side": "onlycrates:blocks/block_giant_chest_3" }
+    },
+    "level=4": {
+      "model": "onlycrates:block_giant_chest_base_detail",
+      "textures": { "side": "onlycrates:blocks/block_giant_chest_4" }
+    },
+    "level=5": {
+      "model": "onlycrates:block_giant_chest_base_detail",
+      "textures": { "side": "onlycrates:blocks/block_giant_chest_5" }
+    },
+    "level=6": {
+      "model": "onlycrates:block_giant_chest_base_detail",
+      "textures": { "side": "onlycrates:blocks/block_giant_chest_6" }
+    },
+    "level=7": {
+      "model": "onlycrates:block_giant_chest_base_detail",
+      "textures": { "side": "onlycrates:blocks/block_giant_chest_7" }
+    },
+    "level=8": {
+      "model": "onlycrates:block_giant_chest_base_detail",
+      "textures": { "side": "onlycrates:blocks/block_giant_chest_8" }
+    },
+    "level=9": {
+      "model": "onlycrates:block_giant_chest_base_detail",
+      "textures": { "side": "onlycrates:blocks/block_giant_chest_9" }
+    },
+    "level=10": {
+      "model": "onlycrates:block_giant_chest_base_detail",
+      "textures": { "side": "onlycrates:blocks/block_giant_chest_10" }
+    },
+    "level=11": {
+      "model": "onlycrates:block_giant_chest_base_detail",
+      "textures": { "side": "onlycrates:blocks/block_giant_chest_11" }
+    },
+    "level=12": {
+      "model": "onlycrates:block_giant_chest_base_detail",
+      "textures": { "side": "onlycrates:blocks/block_giant_chest_12" }
+    },
+    "level=13": {
+      "model": "onlycrates:block_giant_chest_base_detail",
+      "textures": { "side": "onlycrates:blocks/block_giant_chest_13" }
+    },
+    "level=14": {
+      "model": "onlycrates:block_giant_chest_base_detail",
+      "textures": { "side": "onlycrates:blocks/block_giant_chest_14" }
+    },
+    "level=15": {
+      "model": "onlycrates:block_giant_chest_base_detail",
+      "textures": { "side": "onlycrates:blocks/block_giant_chest_15" }
+    }
   }
 }

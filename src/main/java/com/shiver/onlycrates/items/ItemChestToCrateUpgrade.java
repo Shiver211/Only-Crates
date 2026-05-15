@@ -19,13 +19,18 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
+import javax.annotation.Nullable;
+
 public class ItemChestToCrateUpgrade extends Item {
 
     private final Class<? extends TileEntity> start;
+    @Nullable
+    private final IBlockState startState;
     private final IBlockState end;
 
-    public ItemChestToCrateUpgrade(String name, Class<? extends TileEntity> start, IBlockState end) {
+    public ItemChestToCrateUpgrade(String name, Class<? extends TileEntity> start, @Nullable IBlockState startState, IBlockState end) {
         this.start = start;
+        this.startState = startState;
         this.end = end;
         this.setMaxStackSize(1);
     }
@@ -35,7 +40,14 @@ public class ItemChestToCrateUpgrade extends Item {
         ItemStack heldStack = player.getHeldItem(hand);
         if (player.isSneaking()) {
             TileEntity tileHit = world.getTileEntity(pos);
-            if (tileHit != null && this.start.isInstance(tileHit)) {
+            boolean matches = false;
+            if (this.startState != null) {
+                IBlockState currentState = world.getBlockState(pos);
+                matches = currentState.equals(this.startState);
+            } else {
+                matches = tileHit != null && this.start.isInstance(tileHit);
+            }
+            if (tileHit != null && matches) {
                 if (!world.isRemote) {
                     IItemHandlerModifiable chest = null;
                     if (tileHit instanceof IInventory) {

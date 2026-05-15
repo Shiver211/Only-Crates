@@ -1,15 +1,19 @@
 package com.shiver.onlycrates.tile;
 
+import com.shiver.onlycrates.blocks.BlockGiantChest;
 import com.shiver.onlycrates.OnlyCrates;
+import com.shiver.onlycrates.config.ModConfig;
 import com.shiver.onlycrates.inventory.GuiHandler;
 import com.shiver.onlycrates.network.IButtonReactor;
 import com.shiver.onlycrates.util.AwfulUtil;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.loot.ILootContainer;
 import net.minecraft.world.storage.loot.LootContext;
@@ -18,26 +22,33 @@ import net.minecraft.world.storage.loot.LootTable;
 public class TileEntityGiantChest extends TileEntityInventoryBase implements IButtonReactor, ILootContainer {
 
     private static final int SLOTS_PER_PAGE = 9 * 13;
+    private static final String TAG_PAGE_COUNT = "PageCount";
+    private static final String TAG_DISPLAY_NAME = "DisplayName";
 
     public ResourceLocation lootTable;
+    private int pageCount;
     private String customDisplayName;
+
+    public TileEntityGiantChest(int slotAmount, String name, String customDisplayName) {
+        super(slotAmount, name);
+        this.pageCount = Math.max(1, (slotAmount + SLOTS_PER_PAGE - 1) / SLOTS_PER_PAGE);
+        this.customDisplayName = customDisplayName;
+    }
 
     public TileEntityGiantChest(int slotAmount, String name) {
         this(slotAmount, name, null);
     }
 
-    public TileEntityGiantChest(int slotAmount, String name, String customDisplayName) {
-        super(slotAmount, name);
-        this.customDisplayName = customDisplayName;
+    public TileEntityGiantChest(int pages) {
+        this(pages * SLOTS_PER_PAGE, "giantChest", null);
     }
 
     public TileEntityGiantChest() {
-        this(9 * 13, "giantChest");
+        this(9 * 13, "giantChest", null);
     }
 
     public int getPageCount() {
-        int slots = this.inv != null ? this.inv.getSlots() : 0;
-        return Math.max(1, (slots + SLOTS_PER_PAGE - 1) / SLOTS_PER_PAGE);
+        return this.pageCount;
     }
 
     protected void setCustomDisplayName(String customDisplayName) {
@@ -53,7 +64,7 @@ public class TileEntityGiantChest extends TileEntityInventoryBase implements IBu
         if (this.customDisplayName != null && !this.customDisplayName.isEmpty()) {
             return new TextComponentString(this.customDisplayName);
         }
-        return super.getDisplayName();
+        return new TextComponentTranslation(this.getNameForTranslation());
     }
 
     @Override
@@ -62,10 +73,35 @@ public class TileEntityGiantChest extends TileEntityInventoryBase implements IBu
         if (this.lootTable != null) {
             compound.setString("LootTable", this.lootTable.toString());
         }
+        if (type == NBTType.SAVE_BLOCK || type == NBTType.SAVE_TILE) {
+            compound.setInteger(TAG_PAGE_COUNT, this.pageCount);
+            if (this.customDisplayName != null && !this.customDisplayName.isEmpty()) {
+                compound.setString(TAG_DISPLAY_NAME, this.customDisplayName);
+            }
+        }
     }
 
     @Override
     public void readSyncableNBT(NBTTagCompound compound, NBTType type) {
+        // Read page count and resize inventory BEFORE loading items
+        if (type == NBTType.SAVE_TILE && compound.hasKey(TAG_PAGE_COUNT)) {
+            this.pageCount = Math.max(1, compound.getInteger(TAG_PAGE_COUNT));
+            this.setInventorySize(this.pageCount * SLOTS_PER_PAGE);
+        } else if (type == NBTType.SAVE_TILE && this.hasWorld() && this.pos != null) {
+            // Defensive: resize from block state if PageCount not in NBT
+            IBlockState state = this.world.getBlockState(this.pos);
+            if (state.getBlock() instanceof BlockGiantChest) {
+                int level = state.getValue(BlockGiantChest.LEVEL);
+                ModConfig.CrateLevel crateLevel = ModConfig.getCrateLevel(level);
+                if (crateLevel != null) {
+                    this.pageCount = crateLevel.getPages();
+                    this.setInventorySize(this.pageCount * SLOTS_PER_PAGE);
+                }
+            }
+        }
+        if (compound.hasKey(TAG_DISPLAY_NAME)) {
+            this.customDisplayName = compound.getString(TAG_DISPLAY_NAME);
+        }
         super.readSyncableNBT(compound, type);
         if (compound.hasKey("LootTable")) {
             this.lootTable = new ResourceLocation(compound.getString("LootTable"));

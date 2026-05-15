@@ -17,7 +17,9 @@ public class SlotItemHandlerUnconditioned extends SlotItemHandler {
 
     @Override
     public boolean isItemValid(ItemStack stack) {
-        if (!this.inv.canAccept(this.getSlotIndex(), stack, false)) return false;
+        if (!this.inv.canAccept(this.getSlotIndex(), stack, false)) {
+            return false;
+        }
         ItemStack remainder = this.inv.insertItem(this.getSlotIndex(), stack, true, false);
         return remainder.isEmpty() || remainder.getCount() < stack.getCount();
     }

@@ -3,7 +3,7 @@ package com.shiver.onlycrates.util;
 import java.util.Arrays;
 import java.util.List;
 
-import com.shiver.onlycrates.OnlyCrates;
+import com.shiver.onlycrates.Tags;
 import com.shiver.onlycrates.blocks.ItemBlockBase;
 import com.shiver.onlycrates.creative.OnlyCratesTab;
 import com.shiver.onlycrates.registry.RegistryHandler;
@@ -15,8 +15,8 @@ import net.minecraft.item.ItemStack;
 public final class ItemUtil {
 
     public static void registerBlock(Block block, ItemBlockBase itemBlock, String name, boolean addTab) {
-        block.setTranslationKey(OnlyCrates.MODID + "." + name);
-        block.setRegistryName(OnlyCrates.MODID, name);
+        block.setTranslationKey(Tags.MOD_ID + "." + name);
+        block.setRegistryName(Tags.MOD_ID, name);
         RegistryHandler.BLOCKS_TO_REGISTER.add(block);
 
         itemBlock.setRegistryName(block.getRegistryName());
@@ -26,8 +26,8 @@ public final class ItemUtil {
     }
 
     public static void registerItem(Item item, String name, boolean addTab) {
-        item.setTranslationKey(OnlyCrates.MODID + "." + name);
-        item.setRegistryName(OnlyCrates.MODID, name);
+        item.setTranslationKey(Tags.MOD_ID + "." + name);
+        item.setRegistryName(Tags.MOD_ID, name);
         RegistryHandler.ITEMS_TO_REGISTER.add(item);
         item.setCreativeTab(addTab ? OnlyCratesTab.INSTANCE : null);
     }
@@ -41,7 +41,7 @@ public final class ItemUtil {
     }
 
     public static int getPlaceAt(List<ItemStack> list, ItemStack stack, boolean checkWildcard) {
-        if (list != null && list.size() > 0) {
+        if (list != null && !list.isEmpty()) {
             for (int i = 0; i < list.size(); i++) {
                 if (!StackUtil.isValid(stack) && !StackUtil.isValid(list.get(i)) || areItemsEqual(stack, list.get(i), checkWildcard)) {
                     return i;
