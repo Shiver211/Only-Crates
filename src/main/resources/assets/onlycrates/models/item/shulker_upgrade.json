@@ -1,6 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "onlycrates:items/item_shulker_upgrade"
+    "layer0": "onlycrates:items/shulker_upgrade"
   }
 }
+

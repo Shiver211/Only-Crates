@@ -32,9 +32,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public final class CustomCrateResourcePack implements IResourcePack {
 
-    private static final String LARGE_CRATE_MODEL = "/assets/onlycrates/models/block/block_giant_chest_large.json";
-    private static final String DEFAULT_SIDE_TEXTURE = "onlycrates:blocks/block_giant_chest_large";
-    private static final String TOP_TEXTURE = "onlycrates:blocks/block_giant_chest_top";
+    private static final String LARGE_CRATE_MODEL = "/assets/onlycrates/models/block/giant_chest_large.json";
+    private static final String DEFAULT_SIDE_TEXTURE = "onlycrates:blocks/giant_chest_large";
+    private static final String TOP_TEXTURE = "onlycrates:blocks/giant_chest_top";
 
     private static boolean registered;
 
@@ -175,8 +175,8 @@ public final class CustomCrateResourcePack implements IResourcePack {
 
         String texture = customTextureExists(cratePath) ? textureLocation(cratePath) : DEFAULT_SIDE_TEXTURE;
         return model
-                .replace("\"0\": \"onlycrates:blocks/block_giant_chest_large\"", "\"0\": \"" + texture + "\"")
-                .replace("\"1\": \"onlycrates:blocks/block_giant_chest_top\"", "\"1\": \"" + TOP_TEXTURE + "\"");
+                .replace("\"0\": \"onlycrates:blocks/giant_chest_large\"", "\"0\": \"" + texture + "\"")
+                .replace("\"1\": \"onlycrates:blocks/giant_chest_top\"", "\"1\": \"" + TOP_TEXTURE + "\"");
     }
 
     private boolean customTextureExists(String cratePath) {
@@ -200,3 +200,4 @@ public final class CustomCrateResourcePack implements IResourcePack {
         return new ByteArrayInputStream(value.getBytes(StandardCharsets.UTF_8));
     }
 }
+

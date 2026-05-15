@@ -1,8 +1,8 @@
 {
     "__comment": "Model generated using MrCrayfish's Model Creator (http://mrcrayfish.com/modelcreator/)",
     "textures": {
-        "0": "onlycrates:blocks/block_giant_chest_large",
-        "1": "onlycrates:blocks/block_giant_chest_top"
+        "0": "onlycrates:blocks/giant_chest_large",
+        "1": "onlycrates:blocks/giant_chest_top"
     },
     "elements": [
         {

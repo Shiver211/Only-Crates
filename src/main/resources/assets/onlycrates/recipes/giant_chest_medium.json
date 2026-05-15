@@ -15,10 +15,10 @@
       "ore": "plankWood"
     },
     "D": {
-      "item": "onlycrates:block_giant_chest"
+      "item": "onlycrates:giant_chest"
     }
   },
   "result": {
-    "item": "onlycrates:block_giant_chest_medium"
+    "item": "onlycrates:giant_chest_medium"
   }
 }

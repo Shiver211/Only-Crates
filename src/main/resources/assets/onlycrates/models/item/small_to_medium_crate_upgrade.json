@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "onlycrates:items/small_to_medium_crate_upgrade"
+  }
+}
+

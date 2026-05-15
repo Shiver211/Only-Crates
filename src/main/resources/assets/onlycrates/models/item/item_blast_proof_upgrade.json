@@ -1,6 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "onlycrates:items/item_blast_proof_upgrade"
-  }
-}

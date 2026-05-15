@@ -15,9 +15,9 @@ public class ModBlocks {
     private static final List<BlockGiantChest> EXTRA_CRATES = new ArrayList<>();
 
     public static void init() {
-        blockGiantChest = new BlockGiantChest("block_giant_chest", 0);
-        blockGiantChestMedium = new BlockGiantChest("block_giant_chest_medium", 1);
-        blockGiantChestLarge = new BlockGiantChest("block_giant_chest_large", 2);
+        blockGiantChest = new BlockGiantChest("giant_chest", 0);
+        blockGiantChestMedium = new BlockGiantChest("giant_chest_medium", 1);
+        blockGiantChestLarge = new BlockGiantChest("giant_chest_large", 2);
 
         EXTRA_CRATES.clear();
         for (ModConfig.CrateLevel level : ModConfig.getExtraCrates()) {
