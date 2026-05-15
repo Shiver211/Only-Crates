@@ -16,6 +16,8 @@ public class ButtonPacket implements IMessage {
     private int dimension;
     private int buttonId;
 
+    public ButtonPacket() {}
+
     public ButtonPacket(BlockPos pos, int dimension, int buttonId) {
         this.pos = pos;
         this.dimension = dimension;
